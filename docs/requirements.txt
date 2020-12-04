@@ -1,1 +1,3 @@
 nbsphinx
+pytorch
+numpy
