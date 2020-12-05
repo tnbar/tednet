@@ -4,7 +4,10 @@ from setuptools import setup, find_packages
 
 
 __author__ = "Perry"
-__version__ = "0.0.1"
+__version__ = "0.0.2"
+
+with open("README.md", "r") as fh:
+    long_description = fh.read()
 
 setup(
       name='tednet',
@@ -15,7 +18,8 @@ setup(
       url='https://github.com/perryuu/tednet',
       packages=find_packages(),
       py_modules=[],
-      long_description="A toolkit of tensor decomposition network.",
+      long_description=long_description,
+      long_description_content_type="text/markdown",
       license="MIT",
       platforms=["any"],
       install_requires = ["torch>=1.0.0"]
