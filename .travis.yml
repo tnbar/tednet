@@ -4,12 +4,10 @@ python:
   - "3.7"
 # command to install dependencies
 install:
-#  - pip install -r requirements.txt
-#  - python -m pip install --upgrade setuptools wheel
-#  - python setup.py sdist bdist_wheel
-#  - python -m pip install --upgrade twine
+  - pip install -r requirements.txt
+  - python -m pip install --upgrade setuptools wheel
+  - python -m pip install --upgrade twine
 # command to run tests
 script:
-  - echo $PYPINAME
-  - echo $PYPIPW
-#  - python -m twine upload dist/* -u $PYPINAME -p $PYPIPW
+  - python setup.py sdist bdist_wheel
+  - python -m twine upload --repository-url https://upload.pypi.org/legacy/ dist/* -u $PYPINAME -p $PYPIPW
