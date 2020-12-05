@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 
 __author__ = "Perry"
-__version__ = "0.0.2"
+__version__ = "0.0.3"
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
@@ -16,7 +16,7 @@ setup(
       author=__author__,
       maintainer=__author__,
       url='https://github.com/perryuu/tednet',
-      packages=find_packages(),
+      packages="tednet",
       py_modules=[],
       long_description=long_description,
       long_description_content_type="text/markdown",

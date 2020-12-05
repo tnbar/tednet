@@ -2,7 +2,8 @@
 
 import torch
 
-import tednet.tnn.tensor_train as tensor_train
+import tednet.tnn as tnn
+from tednet.tnn import tucker2
 
 # input_c = torch.Tensor(4, 6, 28, 28)
 # input_l = torch.Tensor(4, 6)

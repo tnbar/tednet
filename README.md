@@ -3,3 +3,11 @@
 ![PyPI](https://img.shields.io/pypi/v/tednet)
 
 # tednet
+
+Now, **tednet** is easy to be installed by `pip`:
+
+```shell script
+pip install tednet
+```
+
+Related information could be found in [Document](https://tednet.readthedocs.io/en/latest/index.html).
