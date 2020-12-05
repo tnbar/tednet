@@ -10,4 +10,4 @@ Now, **tednet** is easy to be installed by `pip`:
 pip install tednet
 ```
 
-Related information could be found in [Document](https://tednet.readthedocs.io/en/latest/index.html).
+More information could be found in [Document](https://tednet.readthedocs.io/en/latest/index.html).
