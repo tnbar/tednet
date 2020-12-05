@@ -5,6 +5,7 @@ import torch
 import tednet.tnn as tnn
 from tednet.tnn import tucker2
 
+
 # input_c = torch.Tensor(4, 6, 28, 28)
 # input_l = torch.Tensor(4, 6)
 # tl = tensor_ring.TRLinear([2, 3], [4, 5, 6], [7, 8, 9, 10, 11])
