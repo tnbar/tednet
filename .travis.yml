@@ -3,7 +3,6 @@ matrix:
     include:
      - os: linux
        python: 3.6
-       env: BACKEND=mxnet
      - os: linux
        python: 3.7
        env: DEPLOY_PYPI=1
@@ -18,7 +17,7 @@ script:
 deploy:
   provider: pypi
   user: $PYPINAME     # pypi username
-  password: PYPIPW  # pypi password
+  password: $PYPIPW  # pypi password
   on:
 #    tags: true
     branch: main
