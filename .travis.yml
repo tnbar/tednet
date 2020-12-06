@@ -8,3 +8,11 @@ install:
 # command to run tests
 script:
   - pytest tests
+# Deploy on pypi
+#deploy:
+#  provider: pypi
+#  user: xxxxx     # pypi username
+#  password: xxxxxx  # pypi password
+#  on:
+#    tags: true
+#    branch: main
