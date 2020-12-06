@@ -6,7 +6,6 @@ import tednet.tnn as tnn
 from tednet.tnn import tucker2
 
 # torch
-# numpy
 # pytest
 
 
