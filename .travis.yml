@@ -9,10 +9,10 @@ install:
 script:
   - python -m pytest tests
 # Deploy on pypi
-#deploy:
-#  provider: pypi
-#  user: xxxxx     # pypi username
-#  password: xxxxxx  # pypi password
-#  on:
+deploy:
+  provider: pypi
+  user: $PYPINAME     # pypi username
+  password: $PYPIPW  # pypi password
+  on:
 #    tags: true
-#    branch: main
+    branch: main
