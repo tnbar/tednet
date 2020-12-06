@@ -16,7 +16,7 @@ setup(
       author=__author__,
       maintainer=__author__,
       url='https://github.com/perryuu/tednet',
-      packages="tednet",
+      packages=find_packages(exclude=['docs', "tests"]),
       py_modules=[],
       long_description=long_description,
       long_description_content_type="text/markdown",
