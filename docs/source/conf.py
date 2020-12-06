@@ -22,7 +22,9 @@ copyright = '2020, Perry'
 author = 'Perry'
 
 # The full version, including alpha/beta/rc tags
-release = '0.0.3'
+
+import tednet
+release = tednet.__version__
 
 
 # -- General configuration ---------------------------------------------------

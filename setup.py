@@ -1,10 +1,7 @@
 # -*- coding: UTF-8 -*-
 
 from setuptools import setup, find_packages
-
-
-__author__ = "Perry"
-__version__ = "0.0.3"
+from tednet import __author__, __version__
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
