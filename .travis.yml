@@ -13,7 +13,7 @@ script:
 deploy:
   provider: pypi
   user: $PYPINAME     # pypi username
-  password: $PYPIPW  # pypi password
+  password: PYPIPW  # pypi password
   on:
 #    tags: true
     branch: main
