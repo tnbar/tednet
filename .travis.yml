@@ -7,7 +7,7 @@ install:
   - pip install -r requirements.txt
 # command to run tests
 script:
-  - pytest tests
+  - python -m pytest tests
 # Deploy on pypi
 #deploy:
 #  provider: pypi

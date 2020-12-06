@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 
 import sys
-sys.path.append('../tednet')
+# sys.path.append('../tednet')
 
 import torch
 from tednet.tnn.tensor_ring import TRLeNet5
