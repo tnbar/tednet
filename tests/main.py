@@ -5,8 +5,7 @@ import torch
 import tednet.tnn as tnn
 from tednet.tnn import tucker2
 
-# torch
-# pytest
+
 
 
 # input_c = torch.Tensor(4, 6, 28, 28)
