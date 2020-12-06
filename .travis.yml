@@ -1,7 +1,12 @@
 language: python
-python:
-  - "3.6"      # current default Python on Travis CI
-  - "3.7"
+matrix:
+    include:
+     - os: linux
+       python: 3.6
+       env: BACKEND=mxnet
+     - os: linux
+       python: 3.7
+       env: DEPLOY_PYPI=1
 # command to install dependencies
 install:
   - pip install -r requirements.txt
@@ -17,3 +22,4 @@ deploy:
   on:
 #    tags: true
     branch: main
+    condition: $DEPLOY_PYPI == 1
