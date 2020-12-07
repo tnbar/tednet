@@ -12,6 +12,7 @@ Welcome to tednet's documentation!
 
    installation
    api
+   contact
 
 
 .. toctree::
