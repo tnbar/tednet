@@ -7,10 +7,16 @@ Welcome to tednet's documentation!
 ==================================
 
 .. toctree::
+   :hidden:
+
+   Welcome <self>
+
+.. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: Getting Start
 
    installation
+   quick_start
    api
    contact
 
