@@ -3,9 +3,7 @@
 import torch
 
 import tednet.tnn as tnn
-from tednet.tnn import tucker2
-
-
+from tednet.tnn import tucker2, cp
 
 
 # input_c = torch.Tensor(4, 6, 28, 28)
@@ -43,9 +41,16 @@ from tednet.tnn import tucker2
 # tl1 = tensor_train.TTResNet18([6, 6, 6, 6, 6, 6], 100)
 # res = tl1(input_l1)
 
-input_l1 = torch.Tensor(4, 3, 28, 28)
-tl1 = tucker2.TK2ResNet18([6, 6, 6, 6, 6, 6], 100)
-res = tl1(input_l1)
+# input_l1 = torch.Tensor(4, 3, 28, 28)
+# tl1 = tucker2.TK2ResNet18([6, 6, 6, 6, 6, 6], 100)
+# res = tl1(input_l1)
+
+# input_l1 = torch.Tensor(4, 3, 28, 28)
+# tl1 = cp.CPConv2D(3, 16, 3, 3)
+# res = tl1(input_l1)
+input_l2 = torch.Tensor(4, 24)
+tl2 = cp.CPLinear([2, 3, 4], [4, 5], 4)
+res = tl2(input_l2)
 
 # x = tdt.eye(4, 3)
 

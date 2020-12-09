@@ -18,18 +18,18 @@ class TK2Conv2D(_TNConvNd):
 
         Parameters
         ----------
-        in_shape : Union[list, numpy.ndarray]
-                 1-D param :math:`\in \mathbb{R}^m`. The decomposition shape of channel in
-        out_shape : Union[list, numpy.ndarray]
-                 1-D param :math:`\in \mathbb{R}^n`. The decomposition shape of channel out
+        c_in : int
+                 The decomposition shape of channel in
+        c_out : int
+                 The decomposition shape of channel out
         ranks : Union[list, numpy.ndarray]
                  1-D param :math:`\in \mathbb{R}^r`. The ranks of the decomposition
         kernel_size : Union[int, tuple]
                  1-D param :math:`\in \mathbb{R}^m`. The convolutional kernel size
         stride : int
-                 1-D param :math:`\in \mathbb{R}^n`. The length of stride
+                 The length of stride
         padding : int
-                 1-D param :math:`\in \mathbb{R}^r`. The size of padding
+                 The size of padding
         bias : bool
                  use bias of convolution or not. ``True`` to use, and ``False`` to not use
         """
