@@ -138,7 +138,8 @@ class _TNBase(nn.Module, metaclass=abc.ABCMeta):
 
 
 class _TNConvNd(_TNBase):
-    def __init__(self, in_shape, out_shape, ranks, kernel_size: Union[int, tuple], stride=1, padding=0, bias=True):
+    def __init__(self, in_shape: Union[list, np.ndarray], out_shape: Union[list, np.ndarray],
+                 ranks: Union[list, np.ndarray], kernel_size: Union[int, tuple], stride=1, padding=0, bias=True):
         """Tensor Decomposition Convolution.
 
         Parameters
@@ -193,7 +194,8 @@ class _TNConvNd(_TNBase):
 
 
 class _TNLinear(_TNBase):
-    def __init__(self, in_shape, out_shape, ranks, bias=True):
+    def __init__(self, in_shape: Union[list, np.ndarray], out_shape: Union[list, np.ndarray],
+                 ranks: Union[list, np.ndarray], bias=True):
         """The Tensor Decomposition Linear.
 
         Parameters

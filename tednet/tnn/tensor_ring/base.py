@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 
 import math
+from typing import Union
 
 import torch
 import torch.nn as nn
@@ -13,15 +14,24 @@ from ..tn_module import _TNConvNd, _TNLinear
 
 class TRConv2D(_TNConvNd):
     def __init__(self, in_shape, out_shape, ranks, kernel_size, stride=1, padding=0, bias=True):
-        """
-        Tensor Ring Decomposition Convolution.
-        @param in_shape: The decomposition shape of channel in.
-        @param out_shape: The decomposition shape of channel out.
-        @param ranks: The ranks of the decomposition.
-        @param kernel_size: The convolutional kernel size.
-        @param stride: The length of stride.
-        @param padding: The size of padding.
-        @param bias: The bias of convolution.
+        """Tensor Ring Decomposition Convolution.
+
+        Parameters
+        ----------
+        in_shape : Union[list, numpy.ndarray]
+                 1-D param :math:`\in \mathbb{R}^m`. The decomposition shape of channel in
+        out_shape : Union[list, numpy.ndarray]
+                 1-D param :math:`\in \mathbb{R}^n`. The decomposition shape of channel out
+        ranks : Union[list, numpy.ndarray]
+                 1-D param :math:`\in \mathbb{R}^r`. The ranks of the decomposition
+        kernel_size : Union[int, tuple]
+                The convolutional kernel size
+        stride : int
+                The length of stride
+        padding : int
+                The size of padding
+        bias : bool
+                 use bias of convolution or not. ``True`` to use, and ``False`` to not use
         """
         super(TRConv2D, self).__init__(in_shape=in_shape, out_shape=out_shape, ranks=ranks, kernel_size=kernel_size,
                                        stride=stride, padding=padding, bias=bias)
@@ -29,14 +39,12 @@ class TRConv2D(_TNConvNd):
         self.reset_parameters()
 
     def set_tn_type(self):
-        """
-        Set as tensor ring decomposition type.
+        """Set as tensor ring decomposition type.
         """
         self.tn_info["type"] = "tr"
 
     def set_nodes(self):
-        """
-        Generate tensor ring nodes, then add node information to self.tn_info.
+        """Generate tensor ring nodes, then add node information to self.tn_info.
         """
         self.in_num = len(self.in_shape)
         self.out_num = len(self.out_shape)
@@ -82,8 +90,7 @@ class TRConv2D(_TNConvNd):
         self.tn_info["nodes"] = nodes_info
 
     def set_params_info(self):
-        """
-        Record information of Parameters.
+        """Record information of Parameters.
         """
         params_ori = self.in_size * self.out_size * np.prod(self.kernel_size)
 
@@ -101,8 +108,7 @@ class TRConv2D(_TNConvNd):
         print("compression_ration is: ", compression_ration)
 
     def reset_parameters(self):
-        """
-        Reset parameters.
+        """Reset parameters.
         """
         node_vars = []
         for i in range(self.in_num):
@@ -130,10 +136,17 @@ class TRConv2D(_TNConvNd):
             nn.init.zeros_(self.bias)
 
     def tn_contract(self, inputs: torch.Tensor)->torch.Tensor:
-        """
-        The method of contract inputs and tensor nodes.
-        @param inputs: [b, C, H, W]
-        @return: [b, H', W', C']
+        """Tensor Decomposition Convolution.
+
+        Parameters
+        ----------
+        inputs : torch.Tensor
+                 A tensor :math:`\in \mathbb{R}^{b \\times C \\times H \\times W}`
+
+        Returns
+        -------
+        torch.Tensor
+            A tensor :math:`\in \mathbb{R}^{b \\times H' \\times W' \\times C'}`
         """
         batch_size = inputs.shape[0]
         image_hw = inputs.shape[2:]
@@ -173,34 +186,38 @@ class TRConv2D(_TNConvNd):
         return res
 
     def recover(self):
-        """
-        Todo: Use for rebuilding the original tensor.
+        """Todo: Use for rebuilding the original tensor.
         """
         pass
 
 
 class TRLinear(_TNLinear):
-    def __init__(self, in_shape: list, out_shape: list, ranks: list, bias: bool = True):
-        """
-        The Tensor Ring Decomposition Linear.
-        @param in_shape: The decomposition shape of feature in.
-        @param out_shape: The decomposition shape of feature out.
-        @param ranks: The ranks of the decomposition.
-        @param bias: The bias of convolution.
+    def __init__(self, in_shape: Union[list, np.ndarray], out_shape: Union[list, np.ndarray],
+                 ranks: Union[list, np.ndarray], bias: bool = True):
+        """The Tensor Ring Decomposition Linear.
+
+        Parameters
+        ----------
+        in_shape : Union[list, numpy.ndarray]
+                1-D param :math:`\in \mathbb{R}^m`. The decomposition shape of feature in
+        out_shape : Union[list, numpy.ndarray]
+                1-D param :math:`\in \mathbb{R}^n`. The decomposition shape of feature out
+        ranks : Union[list, numpy.ndarray]
+                1-D param :math:`\in \mathbb{R}^r`. The ranks of linear
+        bias : bool
+                use bias of linear or not. ``True`` to use, and ``False`` to not use
         """
         super(TRLinear, self).__init__(in_shape=in_shape, out_shape=out_shape, ranks=ranks, bias=bias)
 
         self.reset_parameters()
 
     def set_tn_type(self):
-        """
-        Set as tensor ring decomposition type.
+        """Set as tensor ring decomposition type.
         """
         self.tn_info["type"] = "tr"
 
     def set_nodes(self):
-        """
-        Generate tensor ring nodes, then add node information to self.tn_info.
+        """Generate tensor ring nodes, then add node information to self.tn_info.
         """
         self.in_num = len(self.in_shape)
         self.out_num = len(self.out_shape)
@@ -229,8 +246,7 @@ class TRLinear(_TNLinear):
         self.tn_info["nodes"] = nodes_info
 
     def set_params_info(self):
-        """
-        Record information of Parameters.
+        """Record information of Parameters.
         """
         params_ori = self.in_size * self.out_size
         params_tr = np.sum(np.multiply(np.multiply(self.ranks_fill[:-1], self.ranks_fill[1:]), self.nodes_shape))
@@ -243,8 +259,7 @@ class TRLinear(_TNLinear):
         print("compression_ration is: ", compression_ration)
 
     def reset_parameters(self):
-        """
-        Reset parameters.
+        """Reset parameters.
         """
         node_vars = []
         for i in range(self.in_num):
@@ -266,10 +281,17 @@ class TRLinear(_TNLinear):
             nn.init.zeros_(self.bias)
 
     def tn_contract(self, inputs: torch.Tensor)->torch.Tensor:
-        """
-        The method of contract inputs and tensor nodes.
-        @param inputs: [b, C]
-        @return: [b, C']
+        """Tensor Ring linear forwarding method.
+
+        Parameters
+        ----------
+        inputs : torch.Tensor
+                 tensor :math:`\in \mathbb{R}^{b \\times C}`
+
+        Returns
+        -------
+        torch.Tensor
+            tensor :math:`\in \mathbb{R}^{b \\times C'}`
         """
         batch_size = inputs.shape[0]
         res = inputs.view(-1, *self.in_shape)
@@ -290,7 +312,6 @@ class TRLinear(_TNLinear):
         return res
 
     def recover(self):
-        """
-        Todo: Use for rebuilding the original tensor.
+        """Todo: Use for rebuilding the original tensor.
         """
         pass
