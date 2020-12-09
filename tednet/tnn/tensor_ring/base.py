@@ -9,7 +9,8 @@ from torch.nn import functional as F
 
 import numpy as np
 
-from ..tn_module import _TNConvNd, _TNLinear
+from ..tn_cnn import _TNConvNd
+from ..tn_linear import _TNLinear
 
 
 class TRConv2D(_TNConvNd):
