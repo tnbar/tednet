@@ -20,15 +20,22 @@ from .base import TRConv2D, TRLinear
 class TRBlock(nn.Module):
     expansion = 1
 
-    def __init__(self, in_shape: Union[list, ndarray], out_shape: Union[list, ndarray], r: int, stride: int=1,
+    def __init__(self, in_shape: Union[list, ndarray], out_shape: Union[list, ndarray], r: int, stride: int = 1,
                  downsample=None):
-        """
-        Tensor Ring Block.
-        @param in_shape: The input shape of block.
-        @param out_shape: The output shape of block.
-        @param r: The rank of this block.
-        @param stride: The conv stride.
-        @param downsample: The downsample model. Set None for no model.
+        """Block-Term Tucker Block.
+
+        Parameters
+        ----------
+        in_shape : Union[list, numpy.ndarray]
+                1-D param :math:`\in \mathbb{R}^m`. The input shape of block
+        out_shape : Union[list, numpy.ndarray]
+                1-D param :math:`\in \mathbb{R}^n`. The output shape of block
+        r : int
+                The rank of this block
+        stride : int
+                The conv stride
+        downsample :
+                The downsample model. Set None for no model
         """
         super(TRBlock, self).__init__()
         out_size = np.prod(out_shape)
@@ -43,10 +50,17 @@ class TRBlock(nn.Module):
         self.downsample = downsample
 
     def forward(self, inputs: Tensor) -> Tensor:
-        """
-        Forwarding method.
-        @param inputs: A Tensor: [b, C, H, W]
-        @return: A Tensor: [b, C', H', W']
+        """Forwarding method.
+
+        Parameters
+        ----------
+        inputs : torch.Tensor
+                tensor :math:`\in \mathbb{R}^{b \\times C \\times H \\times W}`
+
+        Returns
+        -------
+        torch.Tensor
+            tensor :math:`\in \mathbb{R}^{b \\times C' \\times H' \\times W'}`
         """
         residual = inputs
 
@@ -67,13 +81,19 @@ class TRBlock(nn.Module):
 
 
 class TRResNet(nn.Module):
-    def __init__(self, block, rs: list, layers: list, num_classes:int):
-        """
-        ResNet based on Tensor Ring
-        @param block: The block class of ResNet.
-        @param rs: The ranks of network.
-        @param layers: The number of each layer.
-        @param num_classes: The number of classes.
+    def __init__(self, block, rs: Union[list, np.ndarray], layers: list, num_classes:int):
+        """ResNet based on Tensor Ring.
+
+        Parameters
+        ----------
+        block :
+                The block class of ResNet
+        rs : Union[list, numpy.ndarray]
+                The ranks of network
+        layers : list
+                The number of each layer
+        num_classes : int
+                The number of classes
         """
         super(TRResNet, self).__init__()
         assert len(rs) == 6, "The length of ranks should be 6."
@@ -97,15 +117,27 @@ class TRResNet(nn.Module):
 
     def _make_layer(self, block, in_shape: Union[list, ndarray], out_shape: Union[list, ndarray], r: int,
                     blocks: int, stride: int=1) -> nn.Sequential:
-        """
-        Make each block layer.
-        @param block: The block class of ResNet.
-        @param in_shape: The input shape of block.
-        @param out_shape: The output shape of block.
-        @param r: The rank of this block.
-        @param blocks: The number of block.
-        @param stride: The stride of downsample conv.
-        @return: The block network.
+        """Make each block layer.
+
+        Parameters
+        ----------
+        block :
+                The block class of ResNet
+        in_shape : Union[list, numpy.ndarray]
+                The input shape of block
+        out_shape : Union[list, numpy.ndarray]
+                The output shape of block
+        r : int
+                The rank of this block
+        blocks : int
+                The number of block
+        stride : int
+                The stride of downsample conv
+
+        Returns
+        -------
+        torch.nn.Sequential
+            The block network
         """
         downsample = None
         if stride != 1 or np.prod(in_shape) != np.prod(out_shape):
@@ -125,10 +157,17 @@ class TRResNet(nn.Module):
         return nn.Sequential(*layers)
 
     def forward(self, inputs: Tensor) -> Tensor:
-        """
-        Forwarding method.
-        @param inputs: A Tensor: [b, C, H, W]
-        @return: A Tensor: [b, C', H', W']
+        """Forwarding method.
+
+        Parameters
+        ----------
+        inputs : torch.Tensor
+                tensor :math:`\in \mathbb{R}^{b \\times C \\times H \\times W}`
+
+        Returns
+        -------
+        torch.Tensor
+            tensor :math:`\in \mathbb{R}^{b \\times num\_classes}`
         """
         out = self.conv1(inputs)
         out = self.bn1(out)
@@ -147,10 +186,28 @@ class TRResNet(nn.Module):
 
 
 class TRResNet18(TRResNet):
-    def __init__(self, rs, num_classes):
+    def __init__(self, rs: Union[list, np.ndarray], num_classes: int):
+        """ResNet-18 based on Tensor Ring.
+
+        Parameters
+        ----------
+        rs : Union[list, numpy.ndarray]
+                The ranks of network
+        num_classes : int
+                The number of classes
+        """
         super(TRResNet18, self).__init__(block=TRBlock, rs=rs, layers=[2, 2, 2, 2], num_classes=num_classes)
 
 
 class TRResNet34(TRResNet):
-    def __init__(self, rs, num_classes):
+    def __init__(self, rs: Union[list, np.ndarray], num_classes: int):
+        """ResNet-34 based on Tensor Ring.
+
+        Parameters
+        ----------
+        rs : Union[list, numpy.ndarray]
+                The ranks of network
+        num_classes : int
+                The number of classes
+        """
         super(TRResNet34, self).__init__(block=TRBlock, rs=rs, layers=[3, 4, 6, 3], num_classes=num_classes)

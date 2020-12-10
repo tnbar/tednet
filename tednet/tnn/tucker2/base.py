@@ -2,6 +2,7 @@
 
 
 import math
+from typing import Union
 
 import torch
 import torch.nn as nn
@@ -14,25 +15,26 @@ from ..tn_linear import _TNLinear
 
 
 class TK2Conv2D(_TNConvNd):
-    def __init__(self, c_in: int, c_out: int, ranks, kernel_size, stride=1, padding=0, bias=True):
+    def __init__(self, c_in: int, c_out: int, ranks: Union[list, np.ndarray], kernel_size: Union[int, tuple], stride=1,
+                 padding=0, bias=True):
         """Tucker-2 Decomposition Convolution.
 
         Parameters
         ----------
         c_in : int
-                 The decomposition shape of channel in
+                The decomposition shape of channel in
         c_out : int
-                 The decomposition shape of channel out
+                The decomposition shape of channel out
         ranks : Union[list, numpy.ndarray]
-                 1-D param :math:`\in \mathbb{R}^r`. The ranks of the decomposition
+                1-D param :math:`\in \mathbb{R}^r`. The ranks of the decomposition
         kernel_size : Union[int, tuple]
-                 1-D param :math:`\in \mathbb{R}^m`. The convolutional kernel size
+                1-D param :math:`\in \mathbb{R}^m`. The convolutional kernel size
         stride : int
-                 The length of stride
+                The length of stride
         padding : int
-                 The size of padding
+                The size of padding
         bias : bool
-                 use bias of convolution or not. ``True`` to use, and ``False`` to not use
+                use bias of convolution or not. ``True`` to use, and ``False`` to not use
         """
         super(TK2Conv2D, self).__init__(in_shape=[c_in], out_shape=[c_out], ranks=ranks, kernel_size=kernel_size,
                                        stride=stride, padding=padding, bias=bias)
@@ -40,12 +42,13 @@ class TK2Conv2D(_TNConvNd):
         self.reset_parameters()
 
     def set_tn_type(self):
-        """
-        Set as tensor ring decomposition type.
+        """Set as Tucker-2 decomposition type.
         """
         self.tn_info["type"] = "tk2"
 
     def set_nodes(self):
+        """Generate Tucker-2 nodes, then add node information to self.tn_info.
+        """
         self.channel_in = self.in_shape[0]
         self.channel_out = self.out_shape[0]
 
@@ -77,6 +80,8 @@ class TK2Conv2D(_TNConvNd):
         self.tn_info["nodes"] = nodes_info
 
     def set_params_info(self):
+        """Record information of Parameters.
+        """
         params_ori = self.channel_in * self.channel_out * np.prod(self.kernel_size)
 
         params_tk2 = self.channel_in * self.ranks[0] + np.prod(self.ranks) * np.prod(self.kernel_size) \
@@ -91,6 +96,8 @@ class TK2Conv2D(_TNConvNd):
         print("compression_ration is: ", compression_ration)
 
     def reset_parameters(self):
+        """Reset parameters.
+        """
         node_vars = []
         node_vars.append(1. / self.channel_in)
         node_vars.append(1. / self.ranks[1])
@@ -104,7 +111,19 @@ class TK2Conv2D(_TNConvNd):
         if self.bias is not None:
             nn.init.zeros_(self.bias)
 
-    def tn_contract(self, inputs: torch.Tensor)->torch.Tensor:
+    def tn_contract(self, inputs: torch.Tensor) -> torch.Tensor:
+        """Tucker-2 Decomposition Convolution.
+
+        Parameters
+        ----------
+        inputs : torch.Tensor
+                A tensor :math:`\in \mathbb{R}^{b \\times C \\times H \\times W}`
+
+        Returns
+        -------
+        torch.Tensor
+            A tensor :math:`\in \mathbb{R}^{b \\times C' \\times H' \\times W'}`
+        """
         res = inputs
 
         weight_tmp = getattr(self, "node0")
@@ -124,18 +143,41 @@ class TK2Conv2D(_TNConvNd):
 
 
 class TK2Linear(_TNLinear):
-    def __init__(self, in_shape: list, out_size: int, ranks: list, bias: bool = True):
+    def __init__(self, in_shape: Union[list, np.ndarray], out_size: int, ranks: Union[list, np.ndarray],
+                 bias: bool = True):
+        """Tucker-2 Decomposition Linear.
+
+        +-------------------+--------------------+
+        | input length      | ranks length       |
+        +===================+====================+
+        | 1                 | 1                  |
+        +-------------------+--------------------+
+        | 3                 | 2                  |
+        +-------------------+--------------------+
+
+        Parameters
+        ----------
+        in_shape : Union[list, numpy.ndarray]
+                1-D param :math:`\in \mathbb{R}^m, m \in \{1, 3\}`. The decomposition shape of feature in
+        out_size : int
+                The output size of the model
+        ranks : Union[list, numpy.ndarray]
+                1-D param. The rank of the decomposition
+        bias : bool
+                use bias of convolution or not. ``True`` to use, and ``False`` to not use
+        """
         super(TK2Linear, self).__init__(in_shape=in_shape, out_shape=[out_size], ranks=ranks, bias=bias)
 
         self.reset_parameters()
 
     def set_tn_type(self):
-        """
-        Set as tensor ring decomposition type.
+        """Set as Tucker-2 decomposition type.
         """
         self.tn_info["type"] = "tk2"
 
     def set_nodes(self):
+        """Generate Tucker-2 nodes, then add node information to self.tn_info.
+        """
         self.in_num = len(self.in_shape)
 
         if len(self.ranks) == 2:
@@ -179,6 +221,8 @@ class TK2Linear(_TNLinear):
         self.tn_info["nodes"] = nodes_info
 
     def set_params_info(self):
+        """Record information of Parameters.
+        """
         params_ori = np.prod(self.in_shape) * self.out_size
 
         if self.in_num > 1:
@@ -197,6 +241,8 @@ class TK2Linear(_TNLinear):
         print("compression_ration is: ", compression_ration)
 
     def reset_parameters(self):
+        """Reset parameters.
+        """
         node_vars = []
         node_vars.append(1. / self.in_shape[0])
         if self.in_num > 1:
@@ -217,6 +263,18 @@ class TK2Linear(_TNLinear):
             nn.init.zeros_(self.bias)
 
     def tn_contract(self, inputs: torch.Tensor)->torch.Tensor:
+        """Tucker-2 linear forwarding method.
+
+        Parameters
+        ----------
+        inputs : torch.Tensor
+                tensor :math:`\in \mathbb{R}^{b \\times C}`
+
+        Returns
+        -------
+        torch.Tensor
+            tensor :math:`\in \mathbb{R}^{b \\times C'}`
+        """
         if self.in_num > 1:
             res = inputs.view(-1, *self.in_shape)
             weight_tmp = getattr(self, "node0")

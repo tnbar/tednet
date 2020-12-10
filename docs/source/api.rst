@@ -36,6 +36,36 @@ tednet\.tnn\.tn_module
     :private-members:
 
 
+tednet\.tnn\.tn_linear
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+.. automodule:: tednet.tnn.tn_linear
+    :members:
+    :undoc-members:
+    :show-inheritance:
+    :private-members:
+
+
+tednet\.tnn\.tn_cnn
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+.. automodule:: tednet.tnn.tn_cnn
+    :members:
+    :undoc-members:
+    :show-inheritance:
+    :private-members:
+
+
+tednet\.tnn\.tn_rnn
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+.. automodule:: tednet.tnn.tn_rnn
+    :members:
+    :undoc-members:
+    :show-inheritance:
+    :private-members:
+
+
 tednet\.tnn\.cp
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 

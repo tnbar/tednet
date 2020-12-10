@@ -9,34 +9,34 @@ from torch import Tensor
 
 import numpy as np
 
-from .base import TTConv2D, TTLinear
+from .base import CPConv2D, CPLinear
 
 
-class TTLeNet5(nn.Module):
+class CPLeNet5(nn.Module):
     def __init__(self, num_classes: int, rs: Union[list, np.ndarray]):
-        """LeNet-5 based on the Tensor Train.
+        """LeNet-5 based on CANDECOMP/PARAFAC.
 
         Parameters
         ----------
         num_classes : int
-                The number of classes.
+                The number of classes
         rs : Union[list, numpy.ndarray]
                 The ranks of network.
         """
-        super(TTLeNet5, self).__init__()
+        super(CPLeNet5, self).__init__()
 
         assert len(rs) == 4, "The length of the rank should be 4."
 
-        self.c1 = TTConv2D([1, 1], [4, 5], [rs[0], rs[0]], 5, padding=2)
+        self.c1 = CPConv2D(1, 20, 3, 5, padding=2)
         self.s2 = nn.MaxPool2d(kernel_size=(2, 2), stride=2)
-        self.c3 = TTConv2D([4, 5], [5, 10], [rs[1], rs[1]], 5)
+        self.c3 = CPConv2D(20, 50, 3, 5)
         self.s4 = nn.MaxPool2d(kernel_size=(2, 2), stride=2)
 
-        self.fc5 = TTLinear([5, 5, 5, 10], [4, 4, 4, 5], [rs[2], rs[2], rs[2]])
-        self.fc6 = TTLinear([4, 4, 4, 5], [1, 1, 1, num_classes], [rs[3], rs[3], rs[3]])
+        self.fc5 = CPLinear([5, 5, 5, 10], [5, 8, 8], 3)
+        self.fc6 = CPLinear([5, 8, 8], [num_classes], 3)
 
     def forward(self, inputs: Tensor) -> Tensor:
-        """Tensor Train linear forwarding method.
+        """forwarding method.
 
         Parameters
         ----------

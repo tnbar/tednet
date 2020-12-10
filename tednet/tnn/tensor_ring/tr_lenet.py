@@ -1,19 +1,27 @@
 # -*- coding: UTF-8 -*-
 
+from typing import Union
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch import Tensor
 
+import numpy as np
+
 from .base import TRConv2D, TRLinear
 
 
 class TRLeNet5(nn.Module):
-    def __init__(self, num_classes: int, rs: list):
-        """
-        LeNet-5 based on the Tensor Ring.
-        @param num_classes: The number of classes.
-        @param rs: The ranks of network.
+    def __init__(self, num_classes: int, rs: Union[list, np.ndarray]):
+        """LeNet-5 based on Tensor Ring.
+
+        Parameters
+        ----------
+        num_classes : int
+                The number of classes
+        rs : Union[list, numpy.ndarray]
+                The ranks of network.
         """
         super(TRLeNet5, self).__init__()
 
@@ -28,10 +36,17 @@ class TRLeNet5(nn.Module):
         self.fc6 = TRLinear([5, 8, 8], [num_classes], [rs[3], rs[3], rs[3], rs[3]])
 
     def forward(self, inputs: Tensor) -> Tensor:
-        """
-        Forwarding method.
-        @param inputs: A Tensor: [b, C, H, W]
-        @return: A Tensor: [b, C', H', W']
+        """forwarding method.
+
+        Parameters
+        ----------
+        inputs : torch.Tensor
+                tensor :math:`\in \mathbb{R}^{b \\times C \\times H \\times W}`
+
+        Returns
+        -------
+        torch.Tensor
+            tensor :math:`\in \mathbb{R}^{b \\times num\_classes}`
         """
         out = self.c1(inputs)
         out = F.relu(out)

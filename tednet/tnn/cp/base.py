@@ -21,11 +21,11 @@ class CPConv2D(_TNConvNd):
         Parameters
         ----------
         in_shape : Union[list, numpy.ndarray]
-                 1-D param :math:`\in \mathbb{R}^m`. The decomposition shape of channel in
+                1-D param :math:`\in \mathbb{R}^m`. The decomposition shape of channel in
         out_shape : Union[list, numpy.ndarray]
-                 1-D param :math:`\in \mathbb{R}^n`. The decomposition shape of channel out
+                1-D param :math:`\in \mathbb{R}^n`. The decomposition shape of channel out
         rank : int
-                 The rank of the decomposition
+                The rank of the decomposition
         kernel_size : Union[int, tuple]
                 The convolutional kernel size
         stride : int
@@ -33,7 +33,7 @@ class CPConv2D(_TNConvNd):
         padding : int
                 The size of padding
         bias : bool
-                 use bias of convolution or not. ``True`` to use, and ``False`` to not use
+                use bias of convolution or not. ``True`` to use, and ``False`` to not use
         """
         super(CPConv2D, self).__init__(in_shape=[c_in], out_shape=[c_out], ranks=[rank], kernel_size=kernel_size,
                                        stride=stride, padding=padding, bias=bias)
@@ -41,12 +41,12 @@ class CPConv2D(_TNConvNd):
         self.reset_parameters()
 
     def set_tn_type(self):
-        """Set as tensor ring decomposition type.
+        """Set as CANDECOMP/PARAFAC decomposition type.
         """
         self.tn_info["type"] = "cp"
 
     def set_nodes(self):
-        """Generate tensor ring nodes, then add node information to self.tn_info.
+        """Generate CANDECOMP/PARAFAC nodes, then add node information to self.tn_info.
         """
         self.channel_in = self.in_shape[0]
         self.channel_out = self.out_shape[0]
@@ -131,7 +131,7 @@ class CPConv2D(_TNConvNd):
         Parameters
         ----------
         inputs : torch.Tensor
-                 A tensor :math:`\in \mathbb{R}^{b \\times C \\times H \\times W}`
+                A tensor :math:`\in \mathbb{R}^{b \\times C \\times H \\times W}`
 
         Returns
         -------
@@ -207,7 +207,7 @@ class CPLinear(_TNLinear):
         self.reset_parameters()
 
     def set_tn_type(self):
-        """Set as tensor ring decomposition type.
+        """Set as CANDECOMP/PARAFAC decomposition type.
         """
         self.tn_info["type"] = "cp"
 

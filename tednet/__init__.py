@@ -2,7 +2,7 @@
 
 
 __author__ = "Perry"
-__version__ = "0.0.4"
+__version__ = "0.0.5"
 
 from ._ops import *
 

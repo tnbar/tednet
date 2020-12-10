@@ -6,44 +6,41 @@ The first conv kernel is 3 and stride is 1, while another is 7 and stride is 2.
 
 from typing import Union
 
-import numpy as np
-from numpy import ndarray
-
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch import Tensor
 
-from .base import TTConv2D, TTLinear
+import numpy as np
+
+from .base import CPConv2D, CPLinear
 
 
-class TTBlock(nn.Module):
+class CPBlock(nn.Module):
     expansion = 1
 
-    def __init__(self, in_shape: Union[list, ndarray], out_shape: Union[list, ndarray], r: int, stride: int = 1,
-                 downsample=None):
-        """Tensor Train Block.
+    def __init__(self, c_in: int, c_out: int, r: int, stride: int=1, downsample=None):
+        """CANDECOMP/PARAFAC Block.
 
         Parameters
         ----------
-        in_shape : Union[list, numpy.ndarray]
-                1-D param :math:`\in \mathbb{R}^m`. The input shape of block
-        out_shape : Union[list, numpy.ndarray]
-                1-D param :math:`\in \mathbb{R}^m`. The output shape of block
+        c_in : int
+                The input channel size.
+        c_out : int
+                The output channel size.
         r : int
-                The rank of this block
+                The rank of this block.
         stride : int
                 The conv stride
         downsample :
                 The downsample model. Set None for no model
         """
-        super(TTBlock, self).__init__()
-        out_size = np.prod(out_shape)
-        self.conv1 = TTConv2D(in_shape, out_shape, [r for _ in range(len(in_shape))], 3, padding=1, stride=stride)
-        self.bn1 = nn.BatchNorm2d(out_size)
+        super(CPBlock, self).__init__()
+        self.conv1 = CPConv2D(c_in, c_out, r, 3, padding=1, stride=stride)
+        self.bn1 = nn.BatchNorm2d(c_out)
         self.relu = nn.ReLU(inplace=True)
-        self.conv2 = TTConv2D(out_shape, out_shape, [r for _ in range(len(out_shape))], 3, stride=1, padding=1)
-        self.bn2 = nn.BatchNorm2d(out_size)
+        self.conv2 = CPConv2D(c_out, c_out, r, 3, stride=1, padding=1)
+        self.bn2 = nn.BatchNorm2d(c_out)
 
         self.downsample = downsample
 
@@ -78,9 +75,9 @@ class TTBlock(nn.Module):
         return out
 
 
-class TTResNet(nn.Module):
+class CPResNet(nn.Module):
     def __init__(self, block, rs: Union[list, np.ndarray], layers: list, num_classes:int):
-        """ResNet based on Tensor Train.
+        """ResNet based on CANDECOMP/PARAFAC.
 
         Parameters
         ----------
@@ -93,38 +90,34 @@ class TTResNet(nn.Module):
         num_classes : int
                 The number of classes
         """
-        super(TTResNet, self).__init__()
+        super(CPResNet, self).__init__()
         assert len(rs) == 6, "The length of ranks should be 6."
 
-        self.conv1 = TTConv2D([1, 3, 1], [4, 4, 4], [rs[0], rs[0], rs[0]], 3, stride=1, padding=3)
+        self.conv1 = CPConv2D(3, 64, rs[0], 3, stride=1, padding=3)
 
         self.bn1 = nn.BatchNorm2d(64)
         self.relu = nn.ReLU(inplace=True)
         # self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
 
-        self.layer1 = self._make_layer(block, [4, 4, 4], [4, 4, 4], rs[1], layers[0])
-        self.layer2 = self._make_layer(block, [4, 4, 4], [4, 4, 8], rs[2], layers[1], stride=2)
-        self.layer3 = self._make_layer(block, [4, 4, 8], [4, 8, 8], rs[3], layers[2], stride=2)
-        self.layer4 = self._make_layer(block, [4, 8, 8], [8, 8, 8], rs[4], layers[3], stride=2)
+        self.layer1 = self._make_layer(block, 64, 64, rs[1], layers[0])
+        self.layer2 = self._make_layer(block, 64, 128, rs[2], layers[1], stride=2)
+        self.layer3 = self._make_layer(block, 128, 256, rs[3], layers[2], stride=2)
+        self.layer4 = self._make_layer(block, 256, 512, rs[4], layers[3], stride=2)
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
 
-        if num_classes == 10:
-            self.fc = TTLinear([8, 8, 8 * block.expansion], [1, 10, 1], [rs[5], rs[5]])
-        elif num_classes == 100:
-            self.fc = TTLinear([8, 8, 8 * block.expansion], [1, 10, 10], [rs[5], rs[5]])
+        self.fc = CPLinear([8, 8, 8 * block.expansion], [num_classes], rs[5])
 
-    def _make_layer(self, block, in_shape: Union[list, ndarray], out_shape: Union[list, ndarray], r: int,
-                    blocks: int, stride: int=1) -> nn.Sequential:
+    def _make_layer(self, block, c_in: int, c_out: int, r: int, blocks: int, stride: int=1) -> nn.Sequential:
         """Make each block layer.
 
         Parameters
         ----------
         block :
                 The block class of ResNet
-        in_shape : Union[list, numpy.ndarray]
-                The input shape of block
-        out_shape : Union[list, numpy.ndarray]
-                The output shape of block
+        c_in : int
+                The input channel size
+        c_out : int
+                The output channel size
         r : int
                 The rank of this block
         blocks : int
@@ -138,17 +131,17 @@ class TTResNet(nn.Module):
             The block network
         """
         downsample = None
-        if stride != 1 or np.prod(in_shape) != np.prod(out_shape):
+        if stride != 1 or c_in != c_out:
             downsample = nn.Sequential(
                 # nn.Conv2d(self.inplanes, planes * block.expansion, kernel_size=1, stride=stride, bias=False),
-                TTConv2D(in_shape, out_shape, [r for _ in range(len(in_shape))], 1, padding=0, stride=stride),
-                nn.BatchNorm2d(np.prod(out_shape)),
+                CPConv2D(c_in, c_out, r, 1, padding=0, stride=stride),
+                nn.BatchNorm2d(c_out),
             )
 
         layers = []
-        layers.append(block(in_shape, out_shape, r, stride, downsample))
+        layers.append(block(c_in, c_out, r, stride, downsample))
         for i in range(1, blocks):
-            layers.append(block(out_shape, out_shape, r))
+            layers.append(block(c_out, c_out, r))
 
         return nn.Sequential(*layers)
 
@@ -181,9 +174,9 @@ class TTResNet(nn.Module):
         return out
 
 
-class TTResNet18(TTResNet):
+class CPResNet18(CPResNet):
     def __init__(self, rs: Union[list, np.ndarray], num_classes: int):
-        """ResNet-18 based on Tensor Train.
+        """ResNet-18 based on CANDECOMP/PARAFAC.
 
         Parameters
         ----------
@@ -192,12 +185,12 @@ class TTResNet18(TTResNet):
         num_classes : int
                 The number of classes
         """
-        super(TTResNet18, self).__init__(block=TTBlock, rs=rs, layers=[2, 2, 2, 2], num_classes=num_classes)
+        super(CPResNet18, self).__init__(block=CPBlock, rs=rs, layers=[2, 2, 2, 2], num_classes=num_classes)
 
 
-class TTResNet34(TTResNet):
+class CPResNet34(CPResNet):
     def __init__(self, rs: Union[list, np.ndarray], num_classes: int):
-        """ResNet-34 based on Tensor Train.
+        """ResNet-34 based on CANDECOMP/PARAFAC.
 
         Parameters
         ----------
@@ -206,4 +199,4 @@ class TTResNet34(TTResNet):
         num_classes : int
                 The number of classes
         """
-        super(TTResNet34, self).__init__(block=TTBlock, rs=rs, layers=[3, 4, 6, 3], num_classes=num_classes)
+        super(CPResNet34, self).__init__(block=CPBlock, rs=rs, layers=[3, 4, 6, 3], num_classes=num_classes)

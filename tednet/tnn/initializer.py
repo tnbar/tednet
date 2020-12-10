@@ -23,11 +23,11 @@ def trunc_normal_init(model, mean: float = 0., std: float = 0.1):
     Parameters
     ----------
     model : Any
-             a model needed to be initialized
+            a model needed to be initialized
     mean : float
-             mean of truncated normal distribution
+            mean of truncated normal distribution
     std : float
-             standard deviation of truncated normal distribution
+            standard deviation of truncated normal distribution
     """
     for weight in model.parameters():
         _truncated_normal_(weight.data, mean, std)
@@ -42,11 +42,11 @@ def normal(model, mean: float = 0., std: float = 0.1):
     Parameters
     ----------
     model : Any
-             a model needed to be initialized
+            a model needed to be initialized
     mean : float
-             mean of normal distribution
+            mean of normal distribution
     std : float
-             standard deviation of normal distribution
+            standard deviation of normal distribution
     """
     for weight in model.parameters():
         nn.init.normal_(weight.data, mean, std)
@@ -61,11 +61,11 @@ def uniform(model, a: float = 0., b: float = 1.):
     Parameters
     ----------
     model : Any
-             a model needed to be initialized
+            a model needed to be initialized
     a : float
-             the lower bound of the uniform distribution
+            the lower bound of the uniform distribution
     b : float
-             the upper bound of the uniform distribution
+            the upper bound of the uniform distribution
     """
     for weight in model.parameters():
         nn.init.uniform_(weight.data, a, b)

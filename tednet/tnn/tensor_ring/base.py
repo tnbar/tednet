@@ -14,17 +14,18 @@ from ..tn_linear import _TNLinear
 
 
 class TRConv2D(_TNConvNd):
-    def __init__(self, in_shape, out_shape, ranks, kernel_size, stride=1, padding=0, bias=True):
+    def __init__(self, in_shape: Union[list, np.ndarray], out_shape: Union[list, np.ndarray],
+                 ranks: Union[list, np.ndarray], kernel_size: Union[int, tuple], stride=1, padding=0, bias=True):
         """Tensor Ring Decomposition Convolution.
 
         Parameters
         ----------
         in_shape : Union[list, numpy.ndarray]
-                 1-D param :math:`\in \mathbb{R}^m`. The decomposition shape of channel in
+                1-D param :math:`\in \mathbb{R}^m`. The decomposition shape of channel in
         out_shape : Union[list, numpy.ndarray]
-                 1-D param :math:`\in \mathbb{R}^n`. The decomposition shape of channel out
+                1-D param :math:`\in \mathbb{R}^n`. The decomposition shape of channel out
         ranks : Union[list, numpy.ndarray]
-                 1-D param :math:`\in \mathbb{R}^r`. The ranks of the decomposition
+                1-D param :math:`\in \mathbb{R}^r`. The ranks of the decomposition
         kernel_size : Union[int, tuple]
                 The convolutional kernel size
         stride : int
@@ -32,7 +33,7 @@ class TRConv2D(_TNConvNd):
         padding : int
                 The size of padding
         bias : bool
-                 use bias of convolution or not. ``True`` to use, and ``False`` to not use
+                use bias of convolution or not. ``True`` to use, and ``False`` to not use
         """
         super(TRConv2D, self).__init__(in_shape=in_shape, out_shape=out_shape, ranks=ranks, kernel_size=kernel_size,
                                        stride=stride, padding=padding, bias=bias)
@@ -142,7 +143,7 @@ class TRConv2D(_TNConvNd):
         Parameters
         ----------
         inputs : torch.Tensor
-                 A tensor :math:`\in \mathbb{R}^{b \\times C \\times H \\times W}`
+                A tensor :math:`\in \mathbb{R}^{b \\times C \\times H \\times W}`
 
         Returns
         -------
@@ -287,7 +288,7 @@ class TRLinear(_TNLinear):
         Parameters
         ----------
         inputs : torch.Tensor
-                 tensor :math:`\in \mathbb{R}^{b \\times C}`
+                tensor :math:`\in \mathbb{R}^{b \\times C}`
 
         Returns
         -------

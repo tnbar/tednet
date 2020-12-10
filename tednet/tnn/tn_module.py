@@ -115,7 +115,7 @@ class _TNBase(nn.Module, metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
-    def tn_contract(self, inputs: torch.Tensor):
+    def tn_contract(self, inputs: torch.Tensor) -> torch.Tensor:
         """The method of contract inputs and tensor nodes.
 
         Parameters

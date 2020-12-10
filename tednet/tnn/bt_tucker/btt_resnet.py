@@ -14,15 +14,15 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch import Tensor
 
-from .base import TTConv2D, TTLinear
+from .base import BTTConv2D, BTTLinear
 
 
-class TTBlock(nn.Module):
+class BTTBlock(nn.Module):
     expansion = 1
 
     def __init__(self, in_shape: Union[list, ndarray], out_shape: Union[list, ndarray], r: int, stride: int = 1,
                  downsample=None):
-        """Tensor Train Block.
+        """Block-Term Tucker Block.
 
         Parameters
         ----------
@@ -37,12 +37,12 @@ class TTBlock(nn.Module):
         downsample :
                 The downsample model. Set None for no model
         """
-        super(TTBlock, self).__init__()
+        super(BTTBlock, self).__init__()
         out_size = np.prod(out_shape)
-        self.conv1 = TTConv2D(in_shape, out_shape, [r for _ in range(len(in_shape))], 3, padding=1, stride=stride)
+        self.conv1 = BTTConv2D(in_shape, out_shape, [r for _ in range(len(in_shape)+2)], 2, 3, padding=1, stride=stride)
         self.bn1 = nn.BatchNorm2d(out_size)
         self.relu = nn.ReLU(inplace=True)
-        self.conv2 = TTConv2D(out_shape, out_shape, [r for _ in range(len(out_shape))], 3, stride=1, padding=1)
+        self.conv2 = BTTConv2D(out_shape, out_shape, [r for _ in range(len(out_shape)+2)], 2, 3, stride=1, padding=1)
         self.bn2 = nn.BatchNorm2d(out_size)
 
         self.downsample = downsample
@@ -78,9 +78,9 @@ class TTBlock(nn.Module):
         return out
 
 
-class TTResNet(nn.Module):
+class BTTResNet(nn.Module):
     def __init__(self, block, rs: Union[list, np.ndarray], layers: list, num_classes:int):
-        """ResNet based on Tensor Train.
+        """ResNet based on Block-Term Tucker.
 
         Parameters
         ----------
@@ -93,10 +93,10 @@ class TTResNet(nn.Module):
         num_classes : int
                 The number of classes
         """
-        super(TTResNet, self).__init__()
+        super(BTTResNet, self).__init__()
         assert len(rs) == 6, "The length of ranks should be 6."
 
-        self.conv1 = TTConv2D([1, 3, 1], [4, 4, 4], [rs[0], rs[0], rs[0]], 3, stride=1, padding=3)
+        self.conv1 = BTTConv2D([3, 1, 1], [4, 4, 4], [rs[0], rs[0], rs[0], rs[0], rs[0]], 2, 3, stride=1, padding=3)
 
         self.bn1 = nn.BatchNorm2d(64)
         self.relu = nn.ReLU(inplace=True)
@@ -109,9 +109,9 @@ class TTResNet(nn.Module):
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
 
         if num_classes == 10:
-            self.fc = TTLinear([8, 8, 8 * block.expansion], [1, 10, 1], [rs[5], rs[5]])
+            self.fc = BTTLinear([8, 8, 8 * block.expansion], [10, 1, 1], [rs[5], rs[5], rs[5]], 2)
         elif num_classes == 100:
-            self.fc = TTLinear([8, 8, 8 * block.expansion], [1, 10, 10], [rs[5], rs[5]])
+            self.fc = BTTLinear([8, 8, 8 * block.expansion], [10, 10, 1], [rs[5], rs[5], rs[5], rs[5]], 2)
 
     def _make_layer(self, block, in_shape: Union[list, ndarray], out_shape: Union[list, ndarray], r: int,
                     blocks: int, stride: int=1) -> nn.Sequential:
@@ -139,9 +139,10 @@ class TTResNet(nn.Module):
         """
         downsample = None
         if stride != 1 or np.prod(in_shape) != np.prod(out_shape):
+            in_len = len(in_shape)
             downsample = nn.Sequential(
                 # nn.Conv2d(self.inplanes, planes * block.expansion, kernel_size=1, stride=stride, bias=False),
-                TTConv2D(in_shape, out_shape, [r for _ in range(len(in_shape))], 1, padding=0, stride=stride),
+                BTTConv2D(in_shape, out_shape, [r for _ in range(in_len+2)], 2, 1, padding=0, stride=stride),
                 nn.BatchNorm2d(np.prod(out_shape)),
             )
 
@@ -181,9 +182,9 @@ class TTResNet(nn.Module):
         return out
 
 
-class TTResNet18(TTResNet):
+class BTTResNet18(BTTResNet):
     def __init__(self, rs: Union[list, np.ndarray], num_classes: int):
-        """ResNet-18 based on Tensor Train.
+        """ResNet-18 based on Block-Term Tucker.
 
         Parameters
         ----------
@@ -192,12 +193,12 @@ class TTResNet18(TTResNet):
         num_classes : int
                 The number of classes
         """
-        super(TTResNet18, self).__init__(block=TTBlock, rs=rs, layers=[2, 2, 2, 2], num_classes=num_classes)
+        super(BTTResNet18, self).__init__(block=BTTBlock, rs=rs, layers=[2, 2, 2, 2], num_classes=num_classes)
 
 
-class TTResNet34(TTResNet):
+class BTTResNet34(BTTResNet):
     def __init__(self, rs: Union[list, np.ndarray], num_classes: int):
-        """ResNet-34 based on Tensor Train.
+        """ResNet-34 based on Block-Term Tucker.
 
         Parameters
         ----------
@@ -206,4 +207,4 @@ class TTResNet34(TTResNet):
         num_classes : int
                 The number of classes
         """
-        super(TTResNet34, self).__init__(block=TTBlock, rs=rs, layers=[3, 4, 6, 3], num_classes=num_classes)
+        super(BTTResNet34, self).__init__(block=BTTBlock, rs=rs, layers=[3, 4, 6, 3], num_classes=num_classes)
