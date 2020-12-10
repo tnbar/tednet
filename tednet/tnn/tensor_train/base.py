@@ -25,7 +25,7 @@ class TTConv2D(_TNConvNd):
         out_shape : Union[list, numpy.ndarray]
                 1-D param :math:`\in \mathbb{R}^m`. The decomposition shape of channel out
         ranks : Union[list, numpy.ndarray]
-                1-D param :math:`\in \mathbb{R}^m}`. The rank of the decomposition
+                1-D param :math:`\in \mathbb{R}^m`. The rank of the decomposition
         kernel_size : Union[int, tuple]
                 The convolutional kernel size
         stride : int
@@ -161,7 +161,7 @@ class TTLinear(_TNLinear):
         out_shape : Union[list, numpy.ndarray]
                 1-D param :math:`\in \mathbb{R}^m`. The decomposition shape of feature out
         ranks : Union[list, numpy.ndarray]
-                1-D param :math:`\in \mathbb{R}^{m-1}}`. The rank of the decomposition
+                1-D param :math:`\in \mathbb{R}^{m-1}`. The rank of the decomposition
         bias : bool
                 use bias of convolution or not. ``True`` to use, and ``False`` to not use
         """

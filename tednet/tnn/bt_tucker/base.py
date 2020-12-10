@@ -26,7 +26,7 @@ class BTTConv2D(_TNConvNd):
         out_shape : Union[list, numpy.ndarray]
                 1-D param :math:`\in \mathbb{R}^m`. The decomposition shape of channel out
         ranks : Union[list, numpy.ndarray]
-                1-D param :math:`\in \mathbb{R}^{m+2}}`. The rank of the decomposition
+                1-D param :math:`\in \mathbb{R}^{m+2}`. The rank of the decomposition
         block_num : int
                 The number of blocks
         kernel_size : Union[int, tuple]
@@ -205,7 +205,7 @@ class BTTLinear(_TNLinear):
         out_shape : Union[list, numpy.ndarray]
                 1-D param :math:`\in \mathbb{R}^m`. The decomposition shape of feature out
         ranks : Union[list, numpy.ndarray]
-                1-D param :math:`\in \mathbb{R}^{m+2}}`. The rank of the decomposition
+                1-D param :math:`\in \mathbb{R}^m`. The rank of the decomposition
         block_num : int
                 The number of blocks
         bias : bool
