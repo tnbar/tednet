@@ -53,7 +53,7 @@ def ones(x):
     return torch.ones(x)
 
 
-def prod(x):
+def prod_all(x):
     return torch.prod(x)
 
 

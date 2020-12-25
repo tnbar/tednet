@@ -6,20 +6,20 @@ The first conv kernel is 3 and stride is 1, while another is 7 and stride is 2.
 
 from typing import Union
 
+import numpy as np
+from numpy import ndarray
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch import Tensor
 
-import numpy as np
-
 from .base import CPConv2D, CPLinear
+from ..tn_module import LambdaLayer
 
 
 class CPBlock(nn.Module):
-    expansion = 1
-
-    def __init__(self, c_in: int, c_out: int, r: int, stride: int=1, downsample=None):
+    def __init__(self, c_in: int, c_out: int, r: int, stride: int = 1, option='A'):
         """CANDECOMP/PARAFAC Block.
 
         Parameters
@@ -32,17 +32,32 @@ class CPBlock(nn.Module):
                 The rank of this block.
         stride : int
                 The conv stride
-        downsample :
-                The downsample model. Set None for no model
+        option : str
+                Set "A" or "B" to choose the shortcut type
         """
         super(CPBlock, self).__init__()
-        self.conv1 = CPConv2D(c_in, c_out, r, 3, padding=1, stride=stride)
-        self.bn1 = nn.BatchNorm2d(c_out)
-        self.relu = nn.ReLU(inplace=True)
-        self.conv2 = CPConv2D(c_out, c_out, r, 3, stride=1, padding=1)
-        self.bn2 = nn.BatchNorm2d(c_out)
+        in_planes = c_in
+        planes = c_out
 
-        self.downsample = downsample
+
+        self.conv1 = CPConv2D(c_in, c_out, r, 3, padding=1, stride=stride, bias=False)
+        self.bn1 = nn.BatchNorm2d(planes)
+        self.conv2 = CPConv2D(c_out, c_out, r, 3, stride=1, padding=1, bias=False)
+        self.bn2 = nn.BatchNorm2d(planes)
+
+        self.shortcut = nn.Sequential()
+        if stride != 1 or in_planes != planes:
+            if option == 'A':
+                """
+                For CIFAR10 ResNet paper uses option A.
+                """
+                self.shortcut = LambdaLayer(lambda x:
+                                            F.pad(x[:, :, ::2, ::2], (0, 0, 0, 0, planes//4, planes//4), "constant", 0))
+            elif option == 'B':
+                self.shortcut = nn.Sequential(
+                     CPConv2D(c_in, c_out, r, kernel_size=1, stride=stride, bias=False),
+                     nn.BatchNorm2d(planes)
+                )
 
     def forward(self, inputs: Tensor) -> Tensor:
         """Forwarding method.
@@ -57,26 +72,16 @@ class CPBlock(nn.Module):
         torch.Tensor
             tensor :math:`\in \mathbb{R}^{b \\times C' \\times H' \\times W'}`
         """
-        residual = inputs
-
-        out = self.conv1(inputs)
-        out = self.bn1(out)
-        out = self.relu(out)
-
-        out = self.conv2(out)
-        out = self.bn2(out)
-
-        if self.downsample is not None:
-            residual = self.downsample(inputs)
-
-        out += residual
-        out = self.relu(out)
+        out = F.relu(self.bn1(self.conv1(inputs)))
+        out = self.bn2(self.conv2(out))
+        out += self.shortcut(inputs)
+        out = F.relu(out)
 
         return out
 
 
 class CPResNet(nn.Module):
-    def __init__(self, block, rs: Union[list, np.ndarray], layers: list, num_classes:int):
+    def __init__(self, block, rs: Union[list, np.ndarray], num_blocks: list, num_classes:int):
         """ResNet based on CANDECOMP/PARAFAC.
 
         Parameters
@@ -84,30 +89,30 @@ class CPResNet(nn.Module):
         block :
                 The block class of ResNet
         rs : Union[list, numpy.ndarray]
-                The ranks of network
-        layers : list
+                rs :math:`\in \mathbb{R}^{6}`. The ranks of network
+        num_blocks : list
                 The number of each layer
         num_classes : int
                 The number of classes
         """
         super(CPResNet, self).__init__()
-        assert len(rs) == 6, "The length of ranks should be 6."
+        assert len(rs) == 7, "The length of ranks should be 7."
 
-        self.conv1 = CPConv2D(3, 64, rs[0], 3, stride=1, padding=3)
+        self.conv1 = CPConv2D(3, 16, rs[0], kernel_size=3, stride=1,
+                                           padding=1, bias=False)
+        self.bn1 = nn.BatchNorm2d(16)
+        self.layer1 = self._make_layer(block, 16, 16, rs[1], num_blocks[0])
+        self.down_sample2 = block(16, 32, rs[2], stride=2)
+        self.layer2 = self._make_layer(block, 32, 32, rs[3], num_blocks[1]-1)
+        self.down_sample3 = block(32, 64, rs[4], stride=2)
+        self.layer3 = self._make_layer(block, 64, 64, rs[5], num_blocks[2]-1)
 
-        self.bn1 = nn.BatchNorm2d(64)
-        self.relu = nn.ReLU(inplace=True)
-        # self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
+        if num_classes == 10:
+            self.linear = CPLinear([4, 4, 4], [10, 1, 1], rs[6], bias=True)
+        elif num_classes == 100:
+            self.linear = CPLinear([4, 4, 4], [10, 10, 1], rs[6], bias=True)
 
-        self.layer1 = self._make_layer(block, 64, 64, rs[1], layers[0])
-        self.layer2 = self._make_layer(block, 64, 128, rs[2], layers[1], stride=2)
-        self.layer3 = self._make_layer(block, 128, 256, rs[3], layers[2], stride=2)
-        self.layer4 = self._make_layer(block, 256, 512, rs[4], layers[3], stride=2)
-        self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
-
-        self.fc = CPLinear([8, 8, 8 * block.expansion], [num_classes], rs[5])
-
-    def _make_layer(self, block, c_in: int, c_out: int, r: int, blocks: int, stride: int=1) -> nn.Sequential:
+    def _make_layer(self, block, c_in: int, c_out: int, r: int, blocks: int) -> nn.Sequential:
         """Make each block layer.
 
         Parameters
@@ -122,26 +127,16 @@ class CPResNet(nn.Module):
                 The rank of this block
         blocks : int
                 The number of block
-        stride : int
-                The stride of downsample conv
 
         Returns
         -------
         torch.nn.Sequential
             The block network
         """
-        downsample = None
-        if stride != 1 or c_in != c_out:
-            downsample = nn.Sequential(
-                # nn.Conv2d(self.inplanes, planes * block.expansion, kernel_size=1, stride=stride, bias=False),
-                CPConv2D(c_in, c_out, r, 1, padding=0, stride=stride),
-                nn.BatchNorm2d(c_out),
-            )
-
+        strides = [1]*blocks
         layers = []
-        layers.append(block(c_in, c_out, r, stride, downsample))
-        for i in range(1, blocks):
-            layers.append(block(c_out, c_out, r))
+        for stride in strides:
+            layers.append(block(c_in, c_out, r, stride=stride))
 
         return nn.Sequential(*layers)
 
@@ -158,45 +153,41 @@ class CPResNet(nn.Module):
         torch.Tensor
             tensor :math:`\in \mathbb{R}^{b \\times num\_classes}`
         """
-        out = self.conv1(inputs)
-        out = self.bn1(out)
-        out = self.relu(out)
-        # out = self.maxpool(out)
-
+        out = F.relu(self.bn1(self.conv1(inputs)))
         out = self.layer1(out)
+        out = self.down_sample2(out)
         out = self.layer2(out)
+        out = self.down_sample3(out)
         out = self.layer3(out)
-        out = self.layer4(out)
-
-        out = self.avgpool(out)
+        out = F.avg_pool2d(out, out.size()[3])
         out = out.view(out.size(0), -1)
-        out = self.fc(out)
+        out = self.linear(out)
         return out
 
 
-class CPResNet18(CPResNet):
+class CPResNet20(CPResNet):
     def __init__(self, rs: Union[list, np.ndarray], num_classes: int):
-        """ResNet-18 based on CANDECOMP/PARAFAC.
+        """ResNet-20 based on CANDECOMP/PARAFAC.
 
         Parameters
         ----------
         rs : Union[list, numpy.ndarray]
-                The ranks of network
+                rs :math:`\in \mathbb{R}^{7}`. The ranks of network
         num_classes : int
                 The number of classes
         """
-        super(CPResNet18, self).__init__(block=CPBlock, rs=rs, layers=[2, 2, 2, 2], num_classes=num_classes)
+        super(CPResNet20, self).__init__(block=CPBlock, rs=rs, num_blocks=[3, 3, 3], num_classes=num_classes)
 
 
-class CPResNet34(CPResNet):
+class CPResNet32(CPResNet):
     def __init__(self, rs: Union[list, np.ndarray], num_classes: int):
-        """ResNet-34 based on CANDECOMP/PARAFAC.
+        """ResNet-32 based on CANDECOMP/PARAFAC.
 
         Parameters
         ----------
         rs : Union[list, numpy.ndarray]
-                The ranks of network
+                rs :math:`\in \mathbb{R}^{7}`. The ranks of network
         num_classes : int
                 The number of classes
         """
-        super(CPResNet34, self).__init__(block=CPBlock, rs=rs, layers=[3, 4, 6, 3], num_classes=num_classes)
+        super(CPResNet32, self).__init__(block=CPBlock, rs=rs, num_blocks=[5, 5, 5], num_classes=num_classes)

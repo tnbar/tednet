@@ -13,6 +13,7 @@ tednet - A Toolkit for Tensor Decomposition Networks
 
    Introduction <self>
 
+
 .. toctree::
    :maxdepth: 3
    :caption: Getting Start

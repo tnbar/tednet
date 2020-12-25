@@ -16,3 +16,4 @@ class Test_TR(object):
         res = model(data)
 
         assert len(res.shape) == 2
+        print("test over")

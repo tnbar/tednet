@@ -105,7 +105,7 @@ class CPConv2D(_TNConvNd):
         """
         params_ori = self.in_size * self.out_size * np.prod(self.kernel_size)
 
-        params_cp = (self.channel_in, self.channel_out + self.kernel_size[0] + self.kernel_size[1]) * self.ranks[0]
+        params_cp = (self.channel_in + self.channel_out + self.kernel_size[0] + self.kernel_size[1]) * self.ranks[0]
 
         compression_ration = params_ori / params_cp
 

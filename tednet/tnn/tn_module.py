@@ -137,3 +137,29 @@ class _TNBase(nn.Module, metaclass=abc.ABCMeta):
         pass
 
 
+class LambdaLayer(nn.Module):
+    def __init__(self, lambd):
+        """Tensor Ring Block.
+
+        Parameters
+        ----------
+        lambd :
+                a lambda function.
+        """
+        super(LambdaLayer, self).__init__()
+        self.lambd = lambd
+
+    def forward(self, inputs: torch.Tensor) -> torch.Tensor:
+        """Forwarding method.
+
+        Parameters
+        ----------
+        inputs : torch.Tensor
+                tensor :math:`\in \mathbb{R}^{b \\times C \\times H \\times W}`
+
+        Returns
+        -------
+        torch.Tensor
+            tensor :math:`\in \mathbb{R}^{b \\times C' \\times H' \\times W'}`
+        """
+        return self.lambd(inputs)

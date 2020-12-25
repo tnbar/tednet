@@ -65,28 +65,21 @@ class _TNLSTMCell(nn.Module):
             result: hy :math:`\in \mathbb{R}^{H}`, [hy :math:`\in \mathbb{R}^{H}`, cy :math:`\in \mathbb{R}^{H}`]
         """
         hx, cx = state
-        gate_ih = self.dropout_ih(inputs)
-        gate_ih = self.weight_ih(gate_ih)
-
-        # gate_hh = self.dropout_hh(torch.mm(hx, self.weight_hh.t()) + self.bias_hh)
-        # gates = gate_ih + gate_hh
+        gate_ih = self.weight_ih(inputs)
+        gate_ih = self.dropout_ih(gate_ih)
 
         gate_hh = torch.mm(self.dropout_hh(hx), self.weight_hh.t())
         gates = gate_ih + gate_hh + self.bias_hh
 
         ingate, forgetgate, cellgate, outgate = gates.chunk(4, 1)
 
-        # ingate = hard_sigmoid(ingate)
         ingate = torch.sigmoid(ingate)
-        # forgetgate = hard_sigmoid(forgetgate)
         forgetgate = torch.sigmoid(forgetgate)
         cellgate = torch.tanh(cellgate)
-        # outgate = hard_sigmoid(outgate)
         outgate = torch.sigmoid(outgate)
 
         cy = (forgetgate * cx) + (ingate * cellgate)
         hy = outgate * torch.tanh(cy)
-        # hy = self.dropout(hy)
 
         return hy, (hy, cy)
 
@@ -122,14 +115,19 @@ class _TNLSTM(nn.Module):
 
         Returns
         -------
-        LSTMState
-            namedtuple: [hy :math:`\in \mathbb{R}^{H}`, cy :math:`\in \mathbb{R}^{H}`]
+        torch.Tensor, LSTMState
+            tensor :math:`\in \mathbb{R}^{S \\times b \\times C'}`,
+            LSTMState is a namedtuple: [hy :math:`\in \mathbb{R}^{H}`, cy :math:`\in \mathbb{R}^{H}`]
         """
         inputs = inputs.unbind(0)
+        outs = []
         for i in range(len(inputs)):
             out, state = self.cell(inputs[i], state)
+            outs.append(out)
 
-        return state
+        outs = torch.stack(outs)
+
+        return outs, state
 
 
 

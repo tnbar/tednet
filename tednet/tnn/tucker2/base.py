@@ -232,7 +232,7 @@ class TK2Linear(_TNLinear):
         else:
             params_tk2 = self.in_shape[0] * self.ranks[0] + self.ranks[0] * self.out_size
 
-        compression_ration = params_tk2 / params_tk2
+        compression_ration = params_ori / params_tk2
 
         self.tn_info["t_params"] = params_tk2
         self.tn_info["ori_params"] = params_ori
