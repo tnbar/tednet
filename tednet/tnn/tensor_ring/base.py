@@ -41,12 +41,12 @@ class TRConv2D(_TNConvNd):
         self.reset_parameters()
 
     def set_tn_type(self):
-        """Set as tensor ring decomposition type.
+        """Set as Tensor Ring decomposition type.
         """
         self.tn_info["type"] = "tr"
 
     def set_nodes(self):
-        """Generate tensor ring nodes, then add node information to self.tn_info.
+        """Generate Tensor Ring nodes, then add node information to self.tn_info.
         """
         self.in_num = len(self.in_shape)
         self.out_num = len(self.out_shape)
@@ -214,7 +214,7 @@ class TRLinear(_TNLinear):
         self.reset_parameters()
 
     def set_tn_type(self):
-        """Set as tensor ring decomposition type.
+        """Set as Tensor Ring decomposition type.
         """
         self.tn_info["type"] = "tr"
 
