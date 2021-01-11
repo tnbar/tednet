@@ -129,9 +129,26 @@ class CPResNet32_CIFAR10(_Base_CIFAR10):
 
         self.resnet = cp.CPResNet32(rs, 10)
 
+        self.reset_parameters()
+
     def forward(self, x):
         x = self.resnet(x)
         return x
+
+    def reset_parameters(self):
+        for m in self.resnet.modules():
+            if isinstance(m, cp.CPConv2D):
+                for weight in m.parameters():
+                    nn.init.normal_(weight.data, 0, 0.8)
+
+                if m.bias is not None:
+                    nn.init.zeros_(m.bias)
+            if isinstance(m, cp.CPLinear):
+                for weight in m.parameters():
+                    nn.init.normal_(weight.data, 0, 0.8)
+
+                if m.bias is not None:
+                    nn.init.zeros_(m.bias)
 
 
 class TTResNet20_CIFAR10(_Base_CIFAR10):

@@ -3,31 +3,54 @@
 import os
 from config import proj_cfg
 
-from model.resnet_tn_cifar10 import TRResNet20_CIFAR10, TRResNet32_CIFAR10
+from model.resnet_cifar10 import resnet32_cifar10
+from model.resnet_cifar100 import resnet32_cifar100
 
-from model.resnet_cifar100 import resnet20_cifar100, resnet32_cifar100
-from model.resnet_tn_cifar100 import TRResNet20_CIFAR100, TRResNet32_CIFAR100
+from model.resnet_tn_cifar10 import *
+from model.resnet_tn_cifar100 import *
 
 
-def num_para_calcular(net):
+def num_para_calcular(net, name):
     params = list(net.parameters())
     k = 0
     for i in params:
         l = 1
-    #     print("该层的结构：" + str(list(i.size())))
         for j in i.size():
             l *= j
-    #     print("该层参数和：" + str(l))
         k = k + l
-    print(r"Total Params：" + str(k))
+    print(r"%s Total Params：%d" %(name, k))
 
 
 if __name__ == '__main__':
     dataset_path = os.path.join(proj_cfg.root_path, './datasets/')
 
-    tr_res32_c10 = TRResNet32_CIFAR10([2, 2, 2, 2, 2, 2, 2, 2], dataset_path=dataset_path)
-    num_para_calcular(tr_res32_c10)
+    # rn32_c10 = resnet32_cifar10(dataset_path)
+    # num_para_calcular(rn32_c10, "rn32_c10")
+    # rn32_c100 = resnet32_cifar100(dataset_path)
+    # num_para_calcular(rn32_c100, "rn32_c10")
+    #
+    # btt_rn32_c10 = BTTResNet32_CIFAR10([4, 4, 4, 4, 4, 4, 4], dataset_path)
+    # num_para_calcular(btt_rn32_c10, "btt_rn32_c10")
+    # btt_rn32_c100 = BTTResNet32_CIFAR100([4, 4, 4, 4, 4, 4, 4], dataset_path)
+    # num_para_calcular(btt_rn32_c100, "btt_rn32_c100")
 
-    tr_res32_c100 = TRResNet32_CIFAR100([6, 6, 6, 6, 6, 6, 6, 6], dataset_path=dataset_path)
-    num_para_calcular(tr_res32_c100)
+    # cp_rn32_c10 = CPResNet32_CIFAR10([10, 10, 10, 10, 10, 10, 10], dataset_path)
+    # num_para_calcular(cp_rn32_c10, "cp_rn32_c10")
+    # cp_rn32_c100 = CPResNet32_CIFAR100([10, 10, 10, 10, 10, 10, 10], dataset_path)
+    # num_para_calcular(cp_rn32_c100, "cp_rn32_c100")
+
+    # tk2_rn32_c10 = TK2ResNet32_CIFAR10([10, 10, 10, 10, 10, 10, 10], dataset_path)
+    # num_para_calcular(tk2_rn32_c10, "tk2_rn32_c10")
+    # tk2_rn32_c100 = TK2ResNet32_CIFAR100([10, 10, 10, 10, 10, 10, 10], dataset_path)
+    # num_para_calcular(tk2_rn32_c100, "tk2_rn32_c100")
+
+    # tr_rn32_c10 = TRResNet32_CIFAR10([10, 10, 10, 10, 10, 10, 10], dataset_path)
+    # num_para_calcular(tr_rn32_c10, "tr_rn32_c10")
+    # tr_rn32_c100 = TRResNet32_CIFAR100([10, 10, 10, 10, 10, 10, 10], dataset_path)
+    # num_para_calcular(tr_rn32_c100, "tr_rn32_c100")
+
+    tt_rn32_c10 = TTResNet32_CIFAR10([10, 10, 10, 10, 10, 10, 10], dataset_path)
+    num_para_calcular(tt_rn32_c10, "tt_rn32_c10")
+    tt_rn32_c100 = TTResNet32_CIFAR100([10, 10, 10, 10, 10, 10, 10], dataset_path)
+    num_para_calcular(tt_rn32_c100, "tt_rn32_c100")
 

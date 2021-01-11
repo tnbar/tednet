@@ -1,5 +1,7 @@
 # -*- coding: UTF-8 -*-
 
+import math
+
 import numpy as np
 
 import torch
@@ -102,9 +104,26 @@ class BTTResNet32_CIFAR100(_Base_CIFAR100):
 
         self.resnet = btt.BTTResNet32(rs, 100)
 
+        self.reset_parameters()
+
     def forward(self, x):
         x = self.resnet(x)
         return x
+
+    def reset_parameters(self):
+        for m in self.resnet.modules():
+            if isinstance(m, btt.BTTConv2D):
+                for weight in m.parameters():
+                    nn.init.normal_(weight.data, 0, 0.5)
+
+                if m.bias is not None:
+                    nn.init.zeros_(m.bias)
+            if isinstance(m, btt.BTTLinear):
+                for weight in m.parameters():
+                    nn.init.normal_(weight.data, 0, 0.5)
+
+                if m.bias is not None:
+                    nn.init.zeros_(m.bias)
 
 
 class CPResNet20_CIFAR100(_Base_CIFAR100):
@@ -116,9 +135,26 @@ class CPResNet20_CIFAR100(_Base_CIFAR100):
 
         self.resnet = cp.CPResNet20(rs, 100)
 
+        self.reset_parameters()
+
     def forward(self, x):
         x = self.resnet(x)
         return x
+
+    def reset_parameters(self):
+        for m in self.resnet.modules():
+            if isinstance(m, cp.CPConv2D):
+                for weight in m.parameters():
+                    nn.init.normal_(weight.data, 0, 0.8)
+
+                if m.bias is not None:
+                    nn.init.zeros_(m.bias)
+            if isinstance(m, cp.CPLinear):
+                for weight in m.parameters():
+                    nn.init.normal_(weight.data, 0, 0.8)
+
+                if m.bias is not None:
+                    nn.init.zeros_(m.bias)
 
 
 class CPResNet32_CIFAR100(_Base_CIFAR100):
@@ -130,9 +166,26 @@ class CPResNet32_CIFAR100(_Base_CIFAR100):
 
         self.resnet = cp.CPResNet32(rs, 100)
 
+        self.reset_parameters()
+
     def forward(self, x):
         x = self.resnet(x)
         return x
+
+    def reset_parameters(self):
+        for m in self.resnet.modules():
+            if isinstance(m, cp.CPConv2D):
+                for weight in m.parameters():
+                    nn.init.normal_(weight.data, 0, 0.8)
+
+                if m.bias is not None:
+                    nn.init.zeros_(m.bias)
+            if isinstance(m, cp.CPLinear):
+                for weight in m.parameters():
+                    nn.init.normal_(weight.data, 0, 0.8)
+
+                if m.bias is not None:
+                    nn.init.zeros_(m.bias)
 
 
 class TTResNet20_CIFAR100(_Base_CIFAR100):

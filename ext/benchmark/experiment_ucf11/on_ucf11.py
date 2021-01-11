@@ -25,6 +25,7 @@ from torcherry.utils.util import set_env_seed
 from model.cls_rnn import Classifier
 from model.cls_rnn_tn import ClassifierTR, ClassifierBTT, ClassifierCP, ClassifierTT, ClassifierTK2
 
+
 Models = dict(
     Classifier=Classifier,
     ClassifierTR=ClassifierTR,
