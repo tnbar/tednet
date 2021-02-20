@@ -1,4 +1,3 @@
-[![Build Status](https://travis-ci.com/tnbar/tednet.svg?branch=main)](https://github.com/tnbar/tednet)
 [![Python package](https://github.com/tnbar/tednet/actions/workflows/python-package.yml/badge.svg)](https://github.com/tnbar/tednet/actions/workflows/python-package.yml)
 [![Documentation Status](https://readthedocs.org/projects/tednet/badge/?version=latest)](https://tednet.readthedocs.io/en/latest/?badge=latest)
 ![PyPI - License](https://img.shields.io/pypi/l/tednet)
