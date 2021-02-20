@@ -50,20 +50,25 @@ def eye(n: int, m: int, device: torch.device = "cpu", requires_grad: bool=False)
 
 
 def ones(x):
-    return torch.ones(x)
+    # TODO:
+    pass
 
 
 def prod_all(x):
-    return torch.prod(x)
+    # TODO:
+    pass
 
 
 def diag(x):
-    return torch.diag(x)
+    # TODO:
+    pass
 
 
 def tensordot(x):
-    return torch.tensordot(x)
+    # TODO:
+    pass
 
 
 def from_numpy(x):
-    return torch.from_numpy(x)
+    # TODO:
+    pass
