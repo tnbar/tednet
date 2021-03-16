@@ -56,10 +56,11 @@ if __name__ == '__main__':
     fig = plt.figure(figsize=(8, 6))
     ax = fig.gca()
 
-    ax.set_xlim((3, 301))
-    ax.set_ylim((0.50, 0.98))
+    ax.set_xlim((0, 301))
+    ax.set_ylim((0.30, 0.98))
 
-    plt.tick_params(labelsize=22)
+    ax.tick_params(axis='x', labelsize=22)
+    ax.tick_params(axis='y', labelsize=22)
 
     ax.xaxis.set_ticks_position("bottom")
     ax.xaxis.set_label_text("Epoch", fontsize=22)
@@ -68,18 +69,18 @@ if __name__ == '__main__':
 
     color_scheme = dict(ori="#5A7C3C", btt="#65AACB", cp="#4D73BE", tk2="#94AAD8", tr="#DF8244", tt="#68389A")
 
-    f1 = ax.plot(x1, y1, "--", color=color_scheme["ori"], label="LSTM:0.8703", linewidth=2)
-    f2 = ax.plot(x2, y2, "-", color=color_scheme["btt"], label="BTT-LSTM:0.8892", linewidth=2)
-    f3 = ax.plot(x3, y3, "-", color=color_scheme["cp"], label="CP-LSTM:0.8892", linewidth=2)
-    f4 = ax.plot(x4, y4, "-", color=color_scheme["tk2"], label="TK2-LSTM:0.75", linewidth=2)
-    f5 = ax.plot(x5, y5, "-", color=color_scheme["tr"], label="TR-LSTM:0.9209", linewidth=2)
-    f6 = ax.plot(x6, y6, "-", color=color_scheme["tt"], label="TT-LSTM:0.9019", linewidth=2)
+    f1 = ax.plot(x1, y1, "--", color=color_scheme["ori"], label="LSTM:0.8703", linewidth=3)
+    f2 = ax.plot(x2, y2, "-", color=color_scheme["btt"], label="BTT-LSTM:0.8892", linewidth=3)
+    f3 = ax.plot(x3, y3, "-", color=color_scheme["cp"], label="CP-LSTM:0.8892", linewidth=3)
+    f4 = ax.plot(x4, y4, "-", color=color_scheme["tk2"], label="TK2-LSTM:0.75", linewidth=3)
+    f5 = ax.plot(x5, y5, "-", color=color_scheme["tr"], label="TR-LSTM:0.9209", linewidth=3)
+    f6 = ax.plot(x6, y6, "-", color=color_scheme["tt"], label="TT-LSTM:0.9019", linewidth=3)
 
     ax.legend(
-              bbox_to_anchor=[0.95, 0.38],
+              # bbox_to_anchor=[0.95, 0.38],
               # labelspacing =0.1,
               fontsize=18,
-              # loc="best",
+              loc="best",
               # loc="lower right",
               )
     # ax.grid()
@@ -95,7 +96,7 @@ if __name__ == '__main__':
     # ax.xaxis.set_ticks_position("bottom")
     # ax.xaxis.set_label_text("Epoch", fontsize=18)
     ax.yaxis.set_ticks_position("left")
-    ax.yaxis.set_label_text("CR", fontsize=18)
+    ax.yaxis.set_label_text("CR", fontsize=22)
 
     data_dict = {"BTT": 164, "CP": 146, "TK2": 177, "TR": 146, "TT": 164}
     model_name = []
@@ -109,12 +110,12 @@ if __name__ == '__main__':
     ax.bar(x, y, color=[color_scheme["btt"], color_scheme["cp"], color_scheme["tk2"], color_scheme["tr"],
                         color_scheme["tt"]], tick_label=model_name)
     for a, b in zip(x, y):
-        plt.text(a, b+6, r"%d$\times$" % b, ha='center', va='center', fontsize=13)
+        plt.text(a, b+6, r"%d$\times$" % b, ha='center', va='center', fontsize=18)
 
     # ax.set_xlim((8, 301))
     ax.set_ylim((0, 250))
-    ax.tick_params(axis='x', labelsize=18)
-    ax.tick_params(axis='y', labelsize=10)
+    ax.tick_params(axis='x', labelsize=22)
+    ax.tick_params(axis='y', labelsize=22)
     # ax.legend(
     #     # bbox_to_anchor=[0.95, 0.85],
     #     # labelspacing =0.1,
