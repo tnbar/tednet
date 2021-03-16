@@ -59,10 +59,12 @@ if __name__ == '__main__':
     ax.set_xlim((3, 301))
     ax.set_ylim((0.50, 0.98))
 
+    plt.tick_params(labelsize=22)
+
     ax.xaxis.set_ticks_position("bottom")
-    ax.xaxis.set_label_text("Epoch", fontsize=18)
+    ax.xaxis.set_label_text("Epoch", fontsize=22)
     ax.yaxis.set_ticks_position("left")
-    ax.yaxis.set_label_text("Top-1 Accuracy", fontsize=18)
+    ax.yaxis.set_label_text("Top-1 Accuracy", fontsize=22)
 
     color_scheme = dict(ori="#5A7C3C", btt="#65AACB", cp="#4D73BE", tk2="#94AAD8", tr="#DF8244", tt="#68389A")
 
@@ -76,7 +78,7 @@ if __name__ == '__main__':
     ax.legend(
               bbox_to_anchor=[0.95, 0.38],
               # labelspacing =0.1,
-              fontsize=12,
+              fontsize=18,
               # loc="best",
               # loc="lower right",
               )
