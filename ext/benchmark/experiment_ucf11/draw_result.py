@@ -56,7 +56,8 @@ if __name__ == '__main__':
     fig = plt.figure(figsize=(8, 6))
     ax = fig.gca()
 
-    ax.set_xlim((0, 301))
+    # ax.set_xlim((0, 301))
+    ax.set_xlim((0, 150))
     ax.set_ylim((0.30, 0.98))
 
     ax.tick_params(axis='x', labelsize=22)
