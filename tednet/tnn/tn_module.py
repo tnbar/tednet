@@ -8,7 +8,7 @@ import torch.nn as nn
 
 import numpy as np
 
-__all__ = ["_TNBase"]
+__all__ = ["_TNBase", "LambdaLayer"]
 
 
 class _TNBase(nn.Module, metaclass=abc.ABCMeta):
@@ -139,7 +139,7 @@ class _TNBase(nn.Module, metaclass=abc.ABCMeta):
 
 class LambdaLayer(nn.Module):
     def __init__(self, lambd):
-        """Tensor Ring Block.
+        """A layer consists of Lambda function.
 
         Parameters
         ----------

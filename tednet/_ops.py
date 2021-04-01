@@ -1,13 +1,16 @@
 # -*- coding: UTF-8 -*-
 
+from collections import namedtuple
+
+import numpy as np
+
 import torch
 import torch.nn as nn
 from torch.nn import Parameter
 import torch.nn.functional as F
-from collections import namedtuple
 
 
-def hard_sigmoid(tensor: torch.Tensor):
+def hard_sigmoid(tensor: torch.Tensor) -> torch.Tensor:
     """Computes element-wise hard sigmoid of x.
     See e.g. https://github.com/Theano/Theano/blob/master/theano/tensor/nnet/sigm.py#L279
 
@@ -27,7 +30,7 @@ def hard_sigmoid(tensor: torch.Tensor):
     return tensor
 
 
-def eye(n: int, m: int, device: torch.device = "cpu", requires_grad: bool=False):
+def eye(n: int, m: int, device: torch.device = "cpu", requires_grad: bool=False) -> torch.Tensor:
     """Returns a 2-D tensor with ones on the diagonal and zeros elsewhere.
 
     Parameters
@@ -44,31 +47,45 @@ def eye(n: int, m: int, device: torch.device = "cpu", requires_grad: bool=False)
     Returns
     -------
     torch.Tensor
-        2-D tensor :math:`\in \mathbb{R}^{{i_1} \\times {i_2}}`
+        2-D tensor :math:`\in \mathbb{R}^{{n} \\times {m}}`
     """
     return torch.eye(n=n, m=m, device=device, requires_grad=requires_grad)
 
 
-def ones(x):
-    # TODO:
-    pass
+def to_numpy(tensor: torch.Tensor) -> np.ndarray:
+    """Convert torch.Tensor to numpy variable.
+
+    Parameters
+    ----------
+    tensor : torch.Tensor
+             tensor :math:`\in \mathbb{R}^{{i_1} \\times \dots \\times {i_n}}`
+
+    Returns
+    -------
+    numpy.ndarray
+        arr :math:`\in \mathbb{R}^{{i_1} \\times \dots \\times {i_n}}`
+    """
+    if tensor.device.type == "cpu":
+        arr = tensor.numpy()
+    else:
+        arr = tensor.cpu().numpy()
+
+    return arr
 
 
-def prod_all(x):
-    # TODO:
-    pass
+def to_tensor(arr: np.ndarray) -> torch.Tensor:
+    """Convert numpy variable to torch.Tensor.
 
+    Parameters
+    ----------
+    arr : numpy.ndarray
+             arr :math:`\in \mathbb{R}^{{i_1} \\times \dots \\times {i_n}}`
 
-def diag(x):
-    # TODO:
-    pass
+    Returns
+    -------
+    torch.Tensor
+        tensor :math:`\in \mathbb{R}^{{i_1} \\times \dots \\times {i_n}}`
+    """
+    tensor = torch.from_numpy(arr)
 
-
-def tensordot(x):
-    # TODO:
-    pass
-
-
-def from_numpy(x):
-    # TODO:
-    pass
+    return tensor
