@@ -4,7 +4,7 @@
 [![PyPI](https://img.shields.io/pypi/v/tednet)](https://pypi.org/project/tednet/)
 
 # tednet
-``tednet`` is a toolkit for tensor decomposition networks. Tensor decomposition networks are neural networks whose layers are decomposed by tensor decomposition, including CANDECOMP/PARAFAC, Tucker2, Tensor Train, Tensor Ring and so on. For a convenience to do research on it, ``tednet`` provides excellent tools to deal with tensorial networks.
+`tednet` is a toolkit for tensor decomposition networks. Tensor decomposition networks are neural networks whose layers are decomposed by tensor decomposition, including CANDECOMP/PARAFAC, Tucker2, Tensor Train, Tensor Ring and so on. For a convenience to do research on it, ``tednet`` provides excellent tools to deal with tensorial networks.
 
 
 Now, **tednet** is easy to be installed by `pip`:
@@ -21,13 +21,13 @@ More information could be found in [Document](https://tednet.readthedocs.io/en/l
 ---
 
 ##### Operation
-There are some operations supported in tednet, and it is convinient to use them. First, import tednet as:
+There are some operations supported in `tednet`, and it is convinient to use them. First, import it:
 
 ```python
 import tednet as tdt
 ```
 
-To create matrix whose diagonal elements are ones:
+Create matrix whose diagonal elements are ones:
 ```python
 diag_matrix = tdt.eye(5, 5)
 ```
