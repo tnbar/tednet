@@ -53,7 +53,7 @@ def eye(n: int, m: int, device: torch.device = "cpu", requires_grad: bool=False)
 
 
 def to_numpy(tensor: torch.Tensor) -> np.ndarray:
-    """Convert torch.Tensor to numpy variable.
+    """Convert torch.Tensor to numpy.ndarray.
 
     Parameters
     ----------
@@ -74,7 +74,7 @@ def to_numpy(tensor: torch.Tensor) -> np.ndarray:
 
 
 def to_tensor(arr: np.ndarray) -> torch.Tensor:
-    """Convert numpy variable to torch.Tensor.
+    """Convert numpy.ndarray to torch.Tensor.
 
     Parameters
     ----------

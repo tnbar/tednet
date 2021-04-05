@@ -1,6 +1,5 @@
 # -*- coding: UTF-8 -*-
 
-
 import math
 from typing import Union
 

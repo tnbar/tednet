@@ -14,3 +14,7 @@ pip install tednet
 ```
 
 More information could be found in [Document](https://tednet.readthedocs.io/en/latest/index.html).
+
+---
+### Quick Start
+

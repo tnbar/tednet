@@ -28,15 +28,9 @@ class _TNLSTMCell(nn.Module):
                 The dropout rate of hidden-to-hidden door
         """
         super(_TNLSTMCell, self).__init__()
-        # self.input_size = input_size
-        # self.hidden_size = hidden_size
-
         self.weight_ih = tn_block
         self.weight_hh = Parameter(torch.Tensor(4 * hidden_size, hidden_size))
-        # self.bias_ih = Parameter(torch.randn(4 * hidden_size))
         self.bias_hh = Parameter(torch.zeros(4 * hidden_size))
-
-        # self.dropout = nn.Dropout(0.25)
 
         self.reset_hh()
 

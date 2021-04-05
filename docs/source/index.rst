@@ -29,6 +29,7 @@ tednet - A Toolkit for Tensor Decomposition Networks
     :caption: Tutorials
 
     tutorials/tr_cnn
+    tutorials/tr_rnn
 
 Tensor, also known as a multi-way array, can be viewed as a higher-order extension of a vector (i.e., an order-1 tensor) and a matrix (i.e., an order-2 tensor).  Like rows and columns in a matrix, an order-N tensor :math:`{\mathcal X}\in\mathbb R^{I_1\times I_2 \ldots\times I_N}` has N-modes (or ways, orders, indices) whose lengths (or dimensions) are represented by :math:`I_1, \ldots, I_N` respectively. Interestingly, tensors are graphically represented in Tensor network diagrams. As following illustration, a black node denotes a tensor and a edge connected to the node means a tensor mode.
 

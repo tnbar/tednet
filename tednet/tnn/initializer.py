@@ -3,7 +3,7 @@
 import torch
 import torch.nn as nn
 
-__all__ = ["trunc_normal_init", "normal", "uniform"]
+__all__ = ["trunc_normal_init", "normal_init", "uniform_init"]
 
 
 def _truncated_normal_(tensor, mean=0., std=0.09):
@@ -36,7 +36,7 @@ def trunc_normal_init(model, mean: float = 0., std: float = 0.1):
         nn.init.zeros_(model.bias)
 
 
-def normal(model, mean: float = 0., std: float = 0.1):
+def normal_init(model, mean: float = 0., std: float = 0.1):
     """Initialize network with standard normal distribution
 
     Parameters
@@ -55,7 +55,7 @@ def normal(model, mean: float = 0., std: float = 0.1):
         nn.init.zeros_(model.bias)
 
 
-def uniform(model, a: float = 0., b: float = 1.):
+def uniform_init(model, a: float = 0., b: float = 1.):
     """Initialize network with standard uniform distribution
 
     Parameters
