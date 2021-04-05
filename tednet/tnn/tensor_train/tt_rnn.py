@@ -34,7 +34,7 @@ class TTLSTM(_TNLSTM):
         self.hidden_size = np.prod(hidden_shape)
         hidden_shape[0] *= 4
         tn_block = TTLinear(in_shape, hidden_shape, ranks)
-        super(TTLSTM, self).__init__(self.input_size, tn_block, drop_ih, drop_hh)
+        super(TTLSTM, self).__init__(self.hidden_size, tn_block, drop_ih, drop_hh)
         self.reset_ih()
 
     def reset_ih(self):

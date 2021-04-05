@@ -42,7 +42,7 @@ class TK2LSTM(_TNLSTM):
         self.hidden_size = hidden_size
         fc_size = hidden_size * 4
         tn_block = TK2Linear(in_shape, fc_size, ranks)
-        super(TK2LSTM, self).__init__(hidden_size, tn_block, drop_ih, drop_hh)
+        super(TK2LSTM, self).__init__(self.hidden_size, tn_block, drop_ih, drop_hh)
         self.reset_ih()
 
     def reset_ih(self):

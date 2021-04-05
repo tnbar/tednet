@@ -62,6 +62,9 @@ class _TNLSTMCell(nn.Module):
         gate_ih = self.weight_ih(inputs)
         gate_ih = self.dropout_ih(gate_ih)
 
+        print(hx.shape)
+        print(self.weight_hh.shape)
+
         gate_hh = torch.mm(self.dropout_hh(hx), self.weight_hh.t())
         gates = gate_ih + gate_hh + self.bias_hh
 
