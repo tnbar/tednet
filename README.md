@@ -16,9 +16,9 @@ pip install tednet
 More information could be found in [Document](https://tednet.readthedocs.io/en/latest/index.html).
 
 
-### Quick Start
-
 ---
+
+### Quick Start
 
 ##### Operation
 There are some operations supported in `tednet`, and it is convinient to use them. First, import it:
