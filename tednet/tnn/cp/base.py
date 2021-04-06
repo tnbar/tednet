@@ -20,10 +20,10 @@ class CPConv2D(_TNConvNd):
 
         Parameters
         ----------
-        in_shape : Union[list, numpy.ndarray]
-                1-D param :math:`\in \mathbb{R}^m`. The decomposition shape of channel in
-        out_shape : Union[list, numpy.ndarray]
-                1-D param :math:`\in \mathbb{R}^n`. The decomposition shape of channel out
+        c_in : int
+                The decomposition shape of channel in
+        c_out : int
+                The decomposition shape of channel out
         rank : int
                 The rank of the decomposition
         kernel_size : Union[int, tuple]
