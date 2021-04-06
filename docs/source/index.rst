@@ -29,25 +29,34 @@ tednet - A Toolkit for Tensor Decomposition Networks
     :caption: Tutorials
 
     tutorials/tr_cnn
+    tutorials/tr_rnn
 
-Tensors, also known as a multi-way array, can be viewed as a higher-order extension of vectors (i.e., an 1st-order tensors) and a matrices (i.e., an 2nd-order tensors).  Like rows and columns in a matrix, an Nth-order tensor :math:`{\mathcal X}\in\mathbb R^{I_1\times I_2 \ldots\times I_N}` has N-modes (or ways, orders, indices) whose lengths (or dimensions) are represented by :math:`I_1, \ldots, I_N` respectively. Tensors can be graphically represented in diagrams which is known as Tensor Network. As following illustration, a black node denotes a tensor and a edge connected to the node means a tensor mode.
+Tensors
+>>>>>>>>>>>>>>
+Tensors, also known as multi-way arrays, can be viewed as a higher-order extension of vectors (i.e., an 1st-order tensors) and a matrices (i.e., an 2nd-order tensors).  Like rows and columns in a matrix, an Nth-order tensor :math:`{\mathcal X}\in\mathbb R^{I_1\times I_2 \ldots\times I_N}` has N-modes (or ways, orders, indices) whose lengths (or dimensions) are represented by :math:`I_1, \ldots, I_N` respectively. Tensors can be graphically represented in diagrams which is known as Tensor Networks. As following illustration, a black node denotes a tensor and a edge connected to the node means a tensor mode.
 
 .. image:: img/tensor.png
   :width: 400
+
+
+Tensor Contraction
+>>>>>>>>>>>>>>>>>>>>>>
 
 Tensor contraction is the most typical operation for tensors, contracting two tensors into one tensor along the associated pairs of indices. As a result, the corresponding connected edges disappear while the dangling edges persist. The Tensor Network representation of such operation can be illustrated as:
 
 .. image:: img/TC.png
   :width: 400
 
-Tensor contractions among multiple tensors can be computed by performing tensor contraction between two tensors many times. Hence, the order (or number of modes) of an entire Tensor Network is given by the number of dangling edges which are not contracted. 
-
 As show in above figure, contraction between a 5th-order tensor :math:`{\mathcal A}` and a 4th-order tensor :math:`{\mathcal B}` along the index pairs :math:`(i_5,j_1)` and :math:`(i_3,j_2)` yields a 5th-order tensor :math:`{\mathcal C}`, with entries
 
 :math:`{\mathcal C}_{i_1,i_2,i_4,j_3,j_4}=\sum_{i_3,i_5} {\mathcal A}_{i_1,i_2,i_3,i_4,i_5} {\mathcal B}_{i_5,i_3,j_3,j_4}`.
 
+Tensor contractions among multiple tensors can be computed by performing tensor contraction between two tensors many times. Hence, the order (or number of modes) of an entire Tensor Network is given by the number of dangling edges which are not contracted. 
+
 Tensor decomposition is a common technique for compressing Neural Networks, by decomposing a higher-order tensor into several lower-order tensors (usually matrices or 3rd-order tensors) that are sparsely interconnected through the tensor contraction operator. The basic tensor decomposition include CANDECOMP/PARAFAC (CP), Tucker, Block Term (BT), Tensor Train (TT) and so on. And such decomposition formats can be illustrated as the corresponding Tensor Network diagrams.
 
+Tensorized FC Layers 
+>>>>>>>>>>>>>>>>>>>>>>
 By replacing Fully-Connected (FC) layers or Convolution Layers with tensorized layers, large amount of parameters can be reduced.  For example, a FC layer is formulated as :math:`{y}= {W}{x}` and can be illustrated as
 
 .. image:: img/FC.png
@@ -57,9 +66,9 @@ By a simple reshaping method, we can reformulate the FC layer as
 
 :math:`{\mathcal{Y}}_{j_1,\ldots,j_M}= \sum_{i_1,\ldots,i_N=1}^{I_1,\ldots,I_N}{\mathcal W}_{i_1,\ldots,i_N,j_1,\ldots,j_M} ~x_{i_1,i_2,\ldots,i_N}`.
 
-According to the differences of the tensor decomposition ways, there are different tensor formats to represent FC Layers. The most popular tensor decomposition format included CP, Tucker,  Block-Term Tucker, Tensor Train and Tensor Ring. The mathematical format is as follows:
+According to the differences of the tensor decomposition ways, there are different tensor formats to represent FC Layers. The most popular tensor decomposition format included CP, Tucker,  Block-Term Tucker, Tensor Train and Tensor Ring. 
 
-CP Format
+CP Layers 
 >>>>>>>>>>>>>>
 
 The CP decomposition (also called CANDECOMP/PARAFAC decomposition) factorizes a higher-order tensor into a sum of several rank-1 tensor components. The mathematical neural network layer format of utilizing CP decomposition is
@@ -71,7 +80,7 @@ The CP decomposition (also called CANDECOMP/PARAFAC decomposition) factorizes a 
 
 When calculating the CP decomposition, the first issue arises is how to determine the number of rank-1 tensor components, i.e., CP-rank :math:`R`. Actually, it's an NP-hard problem. In practice, an numerical value is usually assumed in advance, i.e., as a hyperparameter, to fit various CP-based models
 
-Tucker Format
+Tucker Layers 
 >>>>>>>>>>>>>>
 
 Tucker decomposition factorizes a higher-order tensor into a core tensor multiplied by a corresponding factor matrix along each mode. To be more specific,  the mathematical neural network layer format of utilizing tucker decomposition is
@@ -83,7 +92,7 @@ Tucker decomposition factorizes a higher-order tensor into a core tensor multipl
 
 Here, please note that compared with the CP-rank, :math:`R_1, R_2, \ldots, R_N` could take different numerical values.
 
-Block-Term Tucker Format
+Block-Term Tucker Layers 
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 Recently, a more generalized decomposition method called Block Term (BT) decomposition, which generalizes CP and Tucker via imposing a block diagonal constraint on the core tensor, has been proposed to make a trade-off between them. The BT decomposition aims to decompose a tensor into a sum of several Tucker decompositions with low Tucker-ranks.  The mathematical neural network layer format is
@@ -95,7 +104,7 @@ Recently, a more generalized decomposition method called Block Term (BT) decompo
 
 :math:`R_T` denotes the Tucker-rank (which means the Tucker-rank equals :math:`\{R_1, ..., R_N\}`) and :math:`C` represents the CP-rank. They are together called BT-ranks.
 
-Tensor Train (Matrix Product Operator) Format
+Tensor Train (Matrix Product Operator) Layers 
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 Matrix Tensor train (mTT) decomposition(sometimes also called Tensor Train), also called Matrxi Product Operator(MPO) in quantum physics, factorizes a higher-order tensor into a linear multiplication of a series of 4th-order core tensors.  The mathematical neural network layer format is
@@ -107,7 +116,7 @@ Matrix Tensor train (mTT) decomposition(sometimes also called Tensor Train), als
 
 :math:`\{R_1,R_2,\ldots,R_{N-1}\}` denote the TT-ranks.
 
-Tensor Ring (Matrix Product State)  Format
+Tensor Ring (Matrix Product State)  Layers 
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 Tensor Train benefits from fast convergence, however, it suffers from the two endpoints, which hinders the representation ability and the flexibility of the TT-based models. Thus, to release the power of the linear architecture, researchers link the endpoints to constitute a ring format named Tensor Ring(TR).  The mathematical neural network layer format is
