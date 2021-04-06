@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 
 __author__ = "Perry"
-__version__ = "0.1.2"
+__version__ = "0.1.3"
 
 from ._ops import *
 
