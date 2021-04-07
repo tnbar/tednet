@@ -140,11 +140,11 @@ For the convolution layers, we can also generalize this idea. We can also repres
 
 the CP format is:
 
-:math:`\mathcal{W}_{h,w,c_{in},c_{out}} = \sum_{r=1}^Rg_{r} a^{(1)}_{h,r}a^{(2)}_{w,r}a^{(3)}_{c_{in},r}a^{(4)}_{c_{out},r}`
+:math:`\mathcal{W}_{h,w,c_{in},c_{out}} = \sum_{r=1}^Rg_{r} a^{(1)}_{h,~r}a^{(2)}_{w,~r}a^{(3)}_{c_{in},~r}a^{(4)}_{c_{out},~r}`
 
 if we generalize the two channel dimentions, the weight can be represented as:
 
-:math:`\mathcal{W}_{h,w,c_{in(1)}\cdots c_{in(N)},c_{out(1)}\cdots c_{out(M)}} = \sum_{r=1}^Rg_{r} a^{(1)}_{h,r}a^{(2)}_{w,r}
-a^{(3)}_{c_{in(1)},r}\cdots a^{(2+n)}_{c_{in(n)},r}a^{(3+N)}_{c_{out(1)},r}\cdots a^{(2+N+M)}_{c_{out(M)},r}`
+:math:`\mathcal{W}_{h,w,c_{in(1)}\cdots c_{in(N)},c_{out(1)}\cdots c_{out(M)}} = \sum_{r=1}^Rg_{r} a^{(1)}_{h,~r}a^{(2)}_{w,~r}
+a^{(3)}_{c_{in(1)}~~,~r}\cdots a^{(2+n)}_{c_{in(n)}~~,~r}a^{(3+N)}_{c_{out(1)}~~,~r}\cdots a^{(2+N+M)}_{c_{out(M)}~~,~r}`
 
 We can also represent the weight in other tensor formats.
