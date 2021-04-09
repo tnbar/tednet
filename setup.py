@@ -9,7 +9,7 @@ with open("README.md", "r") as fh:
 setup(
       name='tednet',
       version=__version__,
-      description='tednet: a framework of tensor decomposition network.',
+      description='TedNet: A Pytorch Toolkit for Tensor Decomposition Networks.',
       author=__author__,
       maintainer=__author__,
       url='https://github.com/perryuu/tednet',
