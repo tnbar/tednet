@@ -58,7 +58,7 @@ model = tr.TRLeNet5(10, [6, 6, 6, 6])
 
 ### Citing
 
-If you use `tednet` in a academic work, we will appreciate you for citing our paper with:
+If you use `tednet` in an academic work, we will appreciate you for citing our paper with:
 
 ```bibtex
 @article{DBLP:journals/corr/abs-2104-05018,
