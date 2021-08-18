@@ -125,9 +125,13 @@ class BTTConv2D(_TNConvNd):
     def reset_parameters(self):
         """Reset parameters.
         """
-        stdv = 1.0 / math.sqrt(self.out_size)
+        in_part = math.sqrt(2. / np.prod(self.in_shape))
+        rank_part = math.sqrt(1. / (np.prod(self.ranks) * np.prod(self.kernel_size) * self.block_num))
+
+        node_num = (self.in_num + 1 +2) * 2
+        std = math.pow(in_part * rank_part, 1./node_num) * 1.
         for weight in self.parameters():
-            weight.data.uniform_(-stdv, stdv)
+            nn.init.normal_(weight.data, 0, std)
 
         if self.bias is not None:
             nn.init.zeros_(self.bias)

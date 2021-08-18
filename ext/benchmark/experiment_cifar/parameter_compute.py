@@ -29,7 +29,9 @@ if __name__ == '__main__':
     # rn32_c100 = resnet32_cifar100(dataset_path)
     # num_para_calcular(rn32_c100, "rn32_c10")
     #
-    # btt_rn32_c10 = BTTResNet32_CIFAR10([4, 4, 4, 4, 4, 4, 4], dataset_path)
+    btt_rn32_c10 = BTTResNet32_CIFAR10([4, 4, 4, 4, 4, 4, 4], dataset_path)
+    num_para_calcular(btt_rn32_c10, "btt_rn32_c10")
+    # btt_rn32_c10 = BTTResNet32_CIFAR10([10, 10, 10, 10, 10, 10, 10], dataset_path)
     # num_para_calcular(btt_rn32_c10, "btt_rn32_c10")
     # btt_rn32_c100 = BTTResNet32_CIFAR100([4, 4, 4, 4, 4, 4, 4], dataset_path)
     # num_para_calcular(btt_rn32_c100, "btt_rn32_c100")
@@ -49,8 +51,8 @@ if __name__ == '__main__':
     # tr_rn32_c100 = TRResNet32_CIFAR100([10, 10, 10, 10, 10, 10, 10], dataset_path)
     # num_para_calcular(tr_rn32_c100, "tr_rn32_c100")
 
-    tt_rn32_c10 = TTResNet32_CIFAR10([10, 10, 10, 10, 10, 10, 10], dataset_path)
-    num_para_calcular(tt_rn32_c10, "tt_rn32_c10")
-    tt_rn32_c100 = TTResNet32_CIFAR100([10, 10, 10, 10, 10, 10, 10], dataset_path)
-    num_para_calcular(tt_rn32_c100, "tt_rn32_c100")
+    # tt_rn32_c10 = TTResNet32_CIFAR10([10, 10, 10, 10, 10, 10, 10], dataset_path)
+    # num_para_calcular(tt_rn32_c10, "tt_rn32_c10")
+    # tt_rn32_c100 = TTResNet32_CIFAR100([10, 10, 10, 10, 10, 10, 10], dataset_path)
+    # num_para_calcular(tt_rn32_c100, "tt_rn32_c100")
 

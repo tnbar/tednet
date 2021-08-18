@@ -195,3 +195,4 @@ class BTTResNet32(BTTResNet):
                 The number of classes
         """
         super(BTTResNet32, self).__init__(block=BTTBlock, rs=rs, num_blocks=[5, 5, 5], num_classes=num_classes)
+
