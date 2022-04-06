@@ -61,19 +61,14 @@ model = tr.TRLeNet5(10, [6, 6, 6, 6])
 If you use `tednet` in an academic work, we will appreciate you for citing our paper with:
 
 ```bibtex
-@article{DBLP:journals/corr/abs-2104-05018,
+@article{DBLP:journals/ijon/PanWX22,
   author    = {Yu Pan and
                Maolin Wang and
                Zenglin Xu},
-  title     = {TedNet: {A} Pytorch Toolkit for Tensor Decomposition Networks},
-  journal   = {CoRR},
-  volume    = {abs/2104.05018},
-  year      = {2021},
-  url       = {https://arxiv.org/abs/2104.05018},
-  archivePrefix = {arXiv},
-  eprint    = {2104.05018},
-  timestamp = {Mon, 19 Apr 2021 16:45:47 +0200},
-  biburl    = {https://dblp.org/rec/journals/corr/abs-2104-05018.bib},
-  bibsource = {dblp computer science bibliography, https://dblp.org}
+  title     = {TedNet: {A} Pytorch toolkit for tensor decomposition networks},
+  journal   = {Neurocomputing},
+  volume    = {469},
+  pages     = {234--238},
+  year      = {2022}
 }
 ```
